@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+  <div>
+    <form method="POST" id="TrackItemForm">
+      {{ form.csrf_token }}
+      <div>
+        {% if form.text.errors %}
+          {% for error in form.text.errors %}
+            <span class="text-danger">
+          {{ error }}
+        </span>
+          {% endfor %}
+        {% endif %}
+
+        {{ form.text }}
+
+      </div>
+      <button class>Add Item</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
