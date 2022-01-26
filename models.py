@@ -51,16 +51,16 @@ class Item(db.Model):
     name = db.Column(db.Text, nullable=False)
     unique_name = db.Column(db.Text, nullable=False)
 
-    current_shops = db.relationship("Current_Shops")
+    current_shops = db.relationship("Shops_Item", backref="Item")
 
-class Prices(db.Model):
-    """Historical prices for all items"""
+class Shops_Item(db.Model):
+    """Items currently in shops and their prices"""
 
-    item_id = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, nullable=False)
-    cost = db.Column(db.Integer, nullable=False)
+    owner = db.Column(db.ForeignKey(Shops.owner), primary_key=True)
+    item_id = db.Column(db.ForeignKey(Item.id), primary_key=True)
+    price = db.Column(db.Integer, nullable=False)
 
-class Current_Shops(db.Model):
+class Shops(db.Model):
     """Shops currently open."""
 
     owner = db.Column(db.Text, primary_key=True)
@@ -69,8 +69,17 @@ class Current_Shops(db.Model):
     map_x = db.Column(db.Integer, nullable=False)
     map_y = db.Column(db.Integer, nullable=False)
 
-    items = db.relationship("Item")
+    items = db.relationship("Shops_Item", backref="Shops")
+    #need to somehow include cost for each item
 
+class PriceHistory(db.Model):
+    """Historical prices for all items"""
+
+    item_id = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, nullable=False)
+    cost = db.Column(db.Integer, nullable=False)
+
+    #only care about shop data if shops are from most recent request
 
 def connect_db(app):
     db.app = app
