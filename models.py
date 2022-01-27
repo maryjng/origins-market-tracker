@@ -53,13 +53,6 @@ class Item(db.Model):
 
     current_shops = db.relationship("Shops_Item", backref="Item")
 
-class Shops_Item(db.Model):
-    """Items currently in shops and their prices"""
-
-    owner = db.Column(db.ForeignKey(Shops.owner), primary_key=True)
-    item_id = db.Column(db.ForeignKey(Item.id), primary_key=True)
-    price = db.Column(db.Integer, nullable=False)
-
 class Shops(db.Model):
     """Shops currently open."""
 
@@ -72,12 +65,21 @@ class Shops(db.Model):
     items = db.relationship("Shops_Item", backref="Shops")
     #need to somehow include cost for each item
 
+class Shops_Item(db.Model):
+    """Items currently in shops and their prices"""
+
+    owner = db.Column(db.ForeignKey(Shops.owner), primary_key=True)
+    item_id = db.Column(db.ForeignKey(Item.id), primary_key=True)
+    price = db.Column(db.Integer, nullable=False)
+
 class PriceHistory(db.Model):
     """Historical prices for all items"""
 
     item_id = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False)
+    #timestamp is WHEN the data was REQUESTED
     cost = db.Column(db.Integer, nullable=False)
+    owner = db.Column(db.ForeignKey(Shops.owner), primary_key=True)
 
     #only care about shop data if shops are from most recent request
 

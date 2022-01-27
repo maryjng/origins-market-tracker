@@ -12,18 +12,19 @@
 <body>
   <nav>
     {% if not g.user %}
-    <a href="">Login</a>
-    <a href="">Register</a>
+    <a href="/login">Login</a>
+    <a href="/register">Register</a>
     {% else %}
-      <a href="">Home</a>
+      <a href="/home">Home</a>
       <a href="">My Trackings</a>
-      <a href=""> | Logout</a>
+      <a href="/logout"> | Logout</a>
     {% endif %}
   </nav>
 
   {% block content %}
 
   {% endblock %}
+  
 </body>
 
 </html>

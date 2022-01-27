@@ -5,7 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from key import API_KEY, SECRET_KEY
 
 from forms import UserAddForm, LoginForm, TrackItemForm
-from models import db, connect_db, User, Item, Prices, Current_Shops
+from models import db, connect_db, User, Item, Shops, Shops_Item, PriceHistory
 
 BASE_URL = "https://api.originsro.org/api/v1/market/list"
 
@@ -40,7 +40,7 @@ def add_user_to_g():
 
 @app.route("/home", methods=["GET"])
 def index():
-    return render_template("index.html")
+    return render_template("home.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -58,15 +58,15 @@ def login():
     return render_template("login.html", form=form)
 
 
-@app.route("register", methods=["GET", "POST"])
+@app.route("/register", methods=["GET", "POST"])
 def register():
     form = UserAddForm()
 
     if form.validate_on_submit:
         try:
-            user.signup(
-            username = form.username.data
-            email = form.username.data
+            User.signup(
+            username = form.username.data,
+            email = form.username.data,
             password = form.password.data)
 
             db.session.commit()
@@ -75,20 +75,21 @@ def register():
 
         except:
             flash("Invalid ")
-            return redirect("register.html", form=form)
+            return redirect("register.html")
 
         return redirect("home.html")
+
     return render_template("register.html", form=form)
 
 
-@app.route("logout", methods=["POST"])
+@app.route("/logout", methods=["POST"])
 def logout():
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
         redirect("/index.html")
 
 
-@app.route("add", methods=["GET", "POST"])
+@app.route("/add", methods=["GET", "POST"])
 def add_item():
     form = TrackItemForm()
 
