@@ -3,20 +3,16 @@
 <div>
   <div>
     <form method="POST" id="AddUserForm">
-      {{ form.csrf_token }}
-      <div>
-        {% if form.text.errors %}
-          {% for error in form.text.errors %}
-            <span class="text-danger">
-          {{ error }}
-        </span>
-          {% endfor %}
-        {% endif %}
+      <!-- {{ form.csrf_token }} -->
+      {{ form.hidden_tag() }}
 
-        {{ form.text }}
-
-      </div>
-      <button class>Add Item</button>
+      {% for field in form if field.widget.input_type != 'hidden' %}
+        {% for error in field.errors %}
+          <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+        {{ field(placeholder=field.label.text, class="form-control") }}
+      {% endfor %}
+      <button class>Register</button>
     </form>
   </div>
 </div>

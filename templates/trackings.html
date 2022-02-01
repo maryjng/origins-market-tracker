@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% if g.user %}
+    <ul>
+      <a href="/add">Add Item</a>
+    {% for shop in shops %}
+
+      <li>
+        <a href="tracking/{{ shop.item_id }}">{{ shop.item_name }}</a>
+      </li>
+      <li>{{ shop.price }}</li>
+      <li>{{ shop.item_id }}</li>
+
+    {% endfor %}
+    </ul>
+  {% endif %}
+
+{% endblock %}

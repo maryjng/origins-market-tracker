@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <title>OriginsRO Market Tracking</title>
 
-  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <link rel="shortcut icon" href="/static/favicon.ico">
 </head>
 
@@ -13,18 +13,19 @@
   <nav>
     {% if not g.user %}
     <a href="/login">Login</a>
+     |
     <a href="/register">Register</a>
     {% else %}
-      <a href="/home">Home</a>
-      <a href="">My Trackings</a>
-      <a href="/logout"> | Logout</a>
+      <a href="/tracking">My Trackings</a>
+       |
+      <a href="/logout">Logout</a>
     {% endif %}
   </nav>
 
   {% block content %}
 
   {% endblock %}
-  
+
 </body>
 
 </html>

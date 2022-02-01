@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% if g.user %}
+    <h2> {{ prices.name }} | ID: {{ prices.item_id }}</h2>
+    <ul>
+    {% for price in prices %}
+
+      <li>{{ prices.price}}</li>
+      <li>{{ prices.owner }}</li>
+      <li>{{ prices.timestamp }}</li>
+
+    {% endfor %}
+    </ul>
+  {% endif %}
+
+{% endblock %}

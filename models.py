@@ -6,15 +6,25 @@ from flask_sqlalchemy import SQLAlchemy
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
+#table showing relationships between User and Item tables
+user_item = db.Table('user_item',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+    db.Column('item_id', db.Integer, db.ForeignKey('items.id'))
+)
+
 class User(db.Model):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.Text, nullable=False, unique=True)
     username = db.Column(db.Text, nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
 
-    tracked_items = db.relationship("Item")
+    tracked_items = db.relationship(
+        "Item",
+        secondary="user_item",
+        backref="following_users"
+    )
 
     @classmethod
     def signup(cls, username, email, password):
@@ -44,17 +54,22 @@ class User(db.Model):
 
         return False
 
+
 class Item(db.Model):
-    """All items in the game"""
+    """ All items in the game """
+
+    __tablename__ = "items"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
-    unique_name = db.Column(db.Text, nullable=False)
 
-    current_shops = db.relationship("Shops_Item", backref="Item")
+    current_shops = db.relationship("Shops", secondary="shops_item", backref="item")
+
 
 class Shops(db.Model):
-    """Shops currently open."""
+    """ Shops currently open """
+
+    __tablename__ = "shops"
 
     owner = db.Column(db.Text, primary_key=True)
     title = db.Column(db.Text, nullable=False)
@@ -62,26 +77,19 @@ class Shops(db.Model):
     map_x = db.Column(db.Integer, nullable=False)
     map_y = db.Column(db.Integer, nullable=False)
 
-    items = db.relationship("Shops_Item", backref="Shops")
-    #need to somehow include cost for each item
+    items = db.relationship("Item", secondary="shops_item", backref="shops")
+
 
 class Shops_Item(db.Model):
-    """Items currently in shops and their prices"""
+    """ Items currently in shops and their prices plus when the shop was opened """
 
-    owner = db.Column(db.ForeignKey(Shops.owner), primary_key=True)
-    item_id = db.Column(db.ForeignKey(Item.id), primary_key=True)
+    __tablename__ = "shops_item"
+
+    owner = db.Column(db.ForeignKey("shops.owner"), primary_key=True)
+    item_id = db.Column(db.ForeignKey("items.id"), primary_key=True)
     price = db.Column(db.Integer, nullable=False)
-
-class PriceHistory(db.Model):
-    """Historical prices for all items"""
-
-    item_id = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False)
-    #timestamp is WHEN the data was REQUESTED
-    cost = db.Column(db.Integer, nullable=False)
-    owner = db.Column(db.ForeignKey(Shops.owner), primary_key=True)
 
-    #only care about shop data if shops are from most recent request
 
 def connect_db(app):
     db.app = app

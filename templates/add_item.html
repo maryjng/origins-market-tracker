@@ -6,16 +6,13 @@
     <form method="POST" id="TrackItemForm">
       {{ form.csrf_token }}
       <div>
-        {% if form.text.errors %}
-          {% for error in form.text.errors %}
-            <span class="text-danger">
-          {{ error }}
-        </span>
+        {{ form.hidden_tag() }}
+        {% for field in form if field.widget.input_type != 'hidden' %}
+          {% for error in field.errors %}
+            <span class="text-danger">{{ error }}</span>
           {% endfor %}
-        {% endif %}
-
-        {{ form.text }}
-
+          {{ field(placeholder=field.label.text, class="form-control") }}
+        {% endfor %}
       </div>
       <button class>Add Item</button>
     </form>
