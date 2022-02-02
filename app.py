@@ -1,12 +1,13 @@
 import os
 import requests
 
+from sqlalchemy import join
 from flask import Flask, render_template, flash, redirect, session, g, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from key import API_KEY, SECRET_KEY
 
 from forms import UserAddForm, LoginForm, TrackItemForm
-from models import db, connect_db, User, Item, Shops, Shops_Item, user_item
+from models import db, connect_db, User, Item, Shops, Shops_Item, User_Item
 
 BASE_URL = "https://api.originsro.org/api/v1/market/list"
 
@@ -27,7 +28,6 @@ toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
-
 #########################################################################
 
 @app.before_request
@@ -46,6 +46,7 @@ def add_user_to_g():
 def index():
 
 
+
     return render_template("home.html")
 
 
@@ -56,39 +57,81 @@ def trackings():
         item_ids = [item.id for item in user.tracked_items]
         all_shops = []
 
-        for id in item_ids:
-            shops = (Shops_Item
-            .query
-            .filter_by(item_id=id)
-            .order_by(Shops_Item.price)
-            .limit(1)
-            .all())
-            #ORDER BY price ASC LIMIT 1
-            item = Item.query.get(id)
+        if len(item_ids) > 0:
+            for id in item_ids:
+                shops = (db.session.query(Shops.owner,
+                                        Shops.title,
+                                        Shops.map_location,
+                                        Shops.map_x,
+                                        Shops.map_y,
+                                        Shops_Item.item_id,
+                                        Shops_Item.price,
+                                        Shops_Item.timestamp)
+                                .join(Shops_Item)
+                                .filter(Shops_Item.item_id==id)
+                                .limit(1)
+                                .all())
 
-            shop = {"item_name": item.name,
-                "item_id": shops.item_id,
-                "price": shops.price,
-                "timestamp": shops.timestamp}
+                item = Item.query.get(id)
 
-            all_shops.append(shop)
+                for owner, title, map_location, map_x, map_y, item_id, price, timestamp in shops:
+                    shop = {"name" : item.name,
+                            "owner": owner,
+                            "title": title,
+                            "map_location": map_location,
+                            "map_x": map_x,
+                            "map_y": map_y,
+                            "item_id": id,
+                            "price": price,
+                            "timestamp": timestamp}
+                #
+                # shop = {"item_name": item.name,
+                #     "item_id": id,
+                #     "price": shops.price,
+                #     "timestamp": shops.timestamp,
+                #     "map_location": shops.map_location,
+                #     "map_x": shops.map_x,
+                #     "map_y": shops.map_y}
 
-        return render_template("trackings.html", shops=all_shops)
+                    all_shops.append(shop)
+
+            length = len(all_shops)
+
+        return render_template("trackings.html", shops=all_shops, length=length)
 
     return redirect(url_for("login"))
 
 
 @app.route("/tracking/<id>", methods=["GET"])
 def track_item(id):
-
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/login")
 
     user = g.user
-    prices = db.session.query(Shops_Item).filter(item_id=id).order_by(asc(Shops_Item.price)).all()
+    prices = db.session.query(Shops_Item).filter_by(item_id=id).order_by(Shops_Item.price.asc()).all()
+    item = Item.query.get(id)
+    id=id
 
-    return render_template("item_tracking.html", prices=prices)
+    return render_template("item_tracking.html", prices=prices, name=item.name, id=id)
+
+
+@app.route("/tracking/remove/<id>", methods=["POST"])
+def remove_item(id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/login")
+
+    user = g.user
+    item = Item.query.get(id)
+
+    tracked_items = user.tracked_items
+
+    if item in tracked_items:
+        user.tracked_items = [tracked for tracked in tracked_items if tracked != item]
+        db.session.commit()
+
+    return redirect(url_for("trackings"))
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -114,7 +157,7 @@ def register():
         try:
             User.signup(
             username = form.username.data,
-            email = form.username.data,
+            email = form.email.data,
             password = form.password.data)
 
             db.session.commit()
@@ -145,21 +188,18 @@ def add_item():
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
+    user = g.user
     # dropdown menu of items in database
     items = [(i.id, i.name) for i in Item.query.all()]
     form.item_name.choices = items
 
     if form.validate_on_submit():
         item_id = form.item_name.data
-        tracked_items = g.user.tracked_items
-
         item = Item.query.get(item_id)
 
-        if item_id not in tracked_items:
-            tracked_items.append(item)
+        if item_id not in user.tracked_items:
+            user.tracked_items.append(item)
             db.session.commit()
-
-        return render_template("trackings.html")
 
     return render_template("add_item.html", form=form)
 

@@ -2,14 +2,14 @@
 
 {% block content %}
   {% if g.user %}
-    <h2> {{ prices.name }} | ID: {{ prices.item_id }}</h2>
+    <h2> {{ name }} | ID: {{ id }}</h2>
     <ul>
     {% for price in prices %}
 
-      <li>{{ prices.price}}</li>
-      <li>{{ prices.owner }}</li>
-      <li>{{ prices.timestamp }}</li>
-
+      <li> Zeny per: {{ price.price}}</li>
+      <li> Shop Owner: {{ price.owner }}</li>
+      <li> Store Opened: {{ price.timestamp }}</li>
+    <br>
     {% endfor %}
     </ul>
   {% endif %}

@@ -7,10 +7,26 @@ bcrypt = Bcrypt()
 db = SQLAlchemy()
 
 #table showing relationships between User and Item tables
-user_item = db.Table('user_item',
-    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-    db.Column('item_id', db.Integer, db.ForeignKey('items.id'))
-)
+# user_item = db.Table('user_item',
+#     db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+#     db.Column('item_id', db.Integer, db.ForeignKey('items.id'))
+# )
+
+class User_Item(db.Model):
+    __tablename__ = "user_item"
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete="cascade"),
+        primary_key=True
+    )
+
+    item_id = db.Column(
+        db.Integer,
+        db.ForeignKey('items.id', ondelete="cascade"),
+        primary_key=True
+    )
+
 
 class User(db.Model):
     __tablename__ = "users"
@@ -23,8 +39,8 @@ class User(db.Model):
     tracked_items = db.relationship(
         "Item",
         secondary="user_item",
-        backref="following_users"
-    )
+        backref="users"
+        )
 
     @classmethod
     def signup(cls, username, email, password):
@@ -54,7 +70,6 @@ class User(db.Model):
 
         return False
 
-
 class Item(db.Model):
     """ All items in the game """
 
@@ -63,7 +78,8 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
 
-    current_shops = db.relationship("Shops", secondary="shops_item", backref="item")
+    # tracking_users = db.relationship("User", backref="items", lazy=True)
+    current_shops = db.relationship("Shops", secondary="shops_item", backref="items")
 
 
 class Shops(db.Model):
@@ -77,7 +93,7 @@ class Shops(db.Model):
     map_x = db.Column(db.Integer, nullable=False)
     map_y = db.Column(db.Integer, nullable=False)
 
-    items = db.relationship("Item", secondary="shops_item", backref="shops")
+    # items = db.relationship("Item", secondary="shops_item", backref="shops")
 
 
 class Shops_Item(db.Model):

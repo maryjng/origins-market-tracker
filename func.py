@@ -9,6 +9,42 @@ items = [{'item_id': 504, 'name': 'White Potion'}, {'item_id': 505, 'name': 'Blu
 
 item_ids = [item.item_id for item in items]
 
+def store_results(res):
+    shops = requests.get("https://api.originsro.org/api/v1/market/list", params={"api_key": API_KEY})
+    shops_res = shops.json()
+
+    shops_data = []
+    prices_data = []
+
+    #get Shops data
+    for shop in shops_res["shops"]:
+        for item in shop["items"]:
+            if item["item_id"] in item_ids:
+                location = shop["location"]
+                try:
+                    db.session.add(Shops(owner=shop["owner"],
+                                    title=shop["title"],
+                                    map_location=location["map"],
+                                    map_x=location["x"],
+                                    map_y=location["y"])
+                                )
+
+                except error as IntegrityError:
+                    print(error)
+
+                try:
+                    db.session.add(Shops_Item(item_id=item["item_id"],
+                                            price=item["price"],
+                                            owner=shop["owner"],
+                                            timestamp=shop["creation_date"])
+                                        )
+                except error as IntegrityError:
+                    print(error)
+
+                break
+
+    db.session.commit()
+    
 # def ping_API():
 #     return requests.get("https://api.originsro.org/api/v1/ping")
 #
@@ -45,46 +81,7 @@ def get_current_data():
     return shops_res
 
 
-def store_results(res):
-    shops = requests.get("https://api.originsro.org/api/v1/market/list", params={"api_key": API_KEY})
-    shops_res = shops.json()
 
-    shops_data = []
-    prices_data = []
-
-    #get Shops data
-    for shop in shops_res["shops"]:
-        for item in shop["items"]:
-            if item["item_id"] in item_ids:
-
-                location = shop["location"]
-                #
-                # try:
-                db.session.add(Shops(owner=shop["owner"],
-                                title=shop["title"],
-                                map_location=location["map"],
-                                map_x=location["x"],
-                                map_y=location["y"])
-                            )
-
-                # except:
-                #     print(f"Failed to add {shop_obj} to the Shops table.")
-
-            #get price history data
-            # for item in shops_res["items"]:
-
-                # try:
-                db.session.add(Shops_Item(item_id=item["item_id"],
-                                        price=item["price"],
-                                        owner=shop["owner"],
-                                        timestamp=shop["creation_date"])
-                                    )
-
-                break
-                # except:
-                #     print(f"Failed to add {shop_item} to the Shops_Item table.")
-
-    db.session.commit()
 
 
 def request_and_store_data():

@@ -2,18 +2,32 @@
 
 {% block content %}
   {% if g.user %}
-    <ul>
+    <div>
       <a href="/add">Add Item</a>
-    {% for shop in shops %}
+    </div>
+    <ul>
 
-      <li>
-        <a href="tracking/{{ shop.item_id }}">{{ shop.item_name }}</a>
-      </li>
-      <li>{{ shop.price }}</li>
-      <li>{{ shop.item_id }}</li>
+    {% if length == 0 %}
+      <h3>No items on tracking list.</h3>
+    {% else %}
+      {% for shop in shops %}
+        <div>
 
-    {% endfor %}
+          <li>
+            <a href="tracking/{{ shop.item_id }}">{{ shop.name }}</a>
+             | Item ID: {{ shop.item_id }}
+            <form method="POST" action="/tracking/remove/{{ shop.item_id }}" id="remove-item-form">
+              <button class="btn btn-sm">Remove</button>
+            </form>
+          </li>
+
+          <li>Price: {{ shop.price }}z</li>
+          <li>Location: {{ shop.map_location }} at ({{ shop.map_x }}, {{ shop.map_y }})</li>
+        <div>
+        <br>
+      {% endfor %}
     </ul>
+    {% endif %}
   {% endif %}
 
 {% endblock %}
