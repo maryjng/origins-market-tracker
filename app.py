@@ -28,6 +28,13 @@ toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
+
+#implement automated requests. Need to handle integrityerror when same attempting to add store data that is already in database
+
+#add showing cards and refine level
+
+#also... add css
+
 #########################################################################
 
 @app.before_request
@@ -45,93 +52,7 @@ def add_user_to_g():
 @app.route("/home", methods=["GET"])
 def index():
 
-
-
     return render_template("home.html")
-
-
-@app.route("/tracking", methods=["GET"])
-def trackings():
-    if g.user:
-        user = g.user
-        item_ids = [item.id for item in user.tracked_items]
-        all_shops = []
-
-        if len(item_ids) > 0:
-            for id in item_ids:
-                shops = (db.session.query(Shops.owner,
-                                        Shops.title,
-                                        Shops.map_location,
-                                        Shops.map_x,
-                                        Shops.map_y,
-                                        Shops_Item.item_id,
-                                        Shops_Item.price,
-                                        Shops_Item.timestamp)
-                                .join(Shops_Item)
-                                .filter(Shops_Item.item_id==id)
-                                .limit(1)
-                                .all())
-
-                item = Item.query.get(id)
-
-                for owner, title, map_location, map_x, map_y, item_id, price, timestamp in shops:
-                    shop = {"name" : item.name,
-                            "owner": owner,
-                            "title": title,
-                            "map_location": map_location,
-                            "map_x": map_x,
-                            "map_y": map_y,
-                            "item_id": id,
-                            "price": price,
-                            "timestamp": timestamp}
-                #
-                # shop = {"item_name": item.name,
-                #     "item_id": id,
-                #     "price": shops.price,
-                #     "timestamp": shops.timestamp,
-                #     "map_location": shops.map_location,
-                #     "map_x": shops.map_x,
-                #     "map_y": shops.map_y}
-
-                    all_shops.append(shop)
-
-            length = len(all_shops)
-
-        return render_template("trackings.html", shops=all_shops, length=length)
-
-    return redirect(url_for("login"))
-
-
-@app.route("/tracking/<id>", methods=["GET"])
-def track_item(id):
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/login")
-
-    user = g.user
-    prices = db.session.query(Shops_Item).filter_by(item_id=id).order_by(Shops_Item.price.asc()).all()
-    item = Item.query.get(id)
-    id=id
-
-    return render_template("item_tracking.html", prices=prices, name=item.name, id=id)
-
-
-@app.route("/tracking/remove/<id>", methods=["POST"])
-def remove_item(id):
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/login")
-
-    user = g.user
-    item = Item.query.get(id)
-
-    tracked_items = user.tracked_items
-
-    if item in tracked_items:
-        user.tracked_items = [tracked for tracked in tracked_items if tracked != item]
-        db.session.commit()
-
-    return redirect(url_for("trackings"))
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -179,6 +100,51 @@ def logout():
         del session[CURR_USER_KEY]
         return redirect(url_for("index"))
 
+#################################################################################
+
+@app.route("/tracking", methods=["GET"])
+def trackings():
+    if g.user:
+        user = g.user
+        item_ids = [item.id for item in user.tracked_items]
+        all_shops = []
+
+        if len(item_ids) > 0:
+            for id in item_ids:
+                shops = (db.session.query(Shops.owner,
+                                        Shops.title,
+                                        Shops.map_location,
+                                        Shops.map_x,
+                                        Shops.map_y,
+                                        Shops_Item.item_id,
+                                        Shops_Item.price,
+                                        Shops_Item.timestamp)
+                                .join(Shops_Item)
+                                .filter(Shops_Item.item_id==id)
+                                .limit(1)
+                                .all())
+
+                item = Item.query.get(id)
+
+                for owner, title, map_location, map_x, map_y, item_id, price, timestamp in shops:
+                    shop = {"name" : item.name,
+                            "owner": owner,
+                            "title": title,
+                            "map_location": map_location,
+                            "map_x": map_x,
+                            "map_y": map_y,
+                            "item_id": id,
+                            "price": price,
+                            "timestamp": timestamp}
+
+                    all_shops.append(shop)
+
+            length = len(all_shops)
+
+        return render_template("trackings.html", shops=all_shops, length=length)
+
+    return redirect(url_for("login"))
+
 
 @app.route("/add", methods=["GET", "POST"])
 def add_item():
@@ -203,7 +169,39 @@ def add_item():
 
     return render_template("add_item.html", form=form)
 
-##########################################################
+
+@app.route("/tracking/<id>", methods=["GET"])
+def track_item(id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/login")
+
+    user = g.user
+    prices = db.session.query(Shops_Item).filter_by(item_id=id).order_by(Shops_Item.price.asc()).all()
+    item = Item.query.get(id)
+    id=id
+
+    return render_template("item_tracking.html", prices=prices, name=item.name, id=id)
+
+
+@app.route("/tracking/remove/<id>", methods=["POST"])
+def remove_item(id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/login")
+
+    user = g.user
+    item = Item.query.get(id)
+
+    tracked_items = user.tracked_items
+
+    if item in tracked_items:
+        user.tracked_items = [tracked for tracked in tracked_items if tracked != item]
+        db.session.commit()
+
+    return redirect(url_for("trackings"))
+
+###############################################################################
 
 def create_app():
     app = Flask(__name__)
