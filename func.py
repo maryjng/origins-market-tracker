@@ -3,6 +3,7 @@ import requests
 from sqlalchemy import exc
 from key import API_KEY
 from models import db, connect_db, Item, Shops, Shops_Item, User
+from datetime import timedelta
 
 ###############################################################################
 
