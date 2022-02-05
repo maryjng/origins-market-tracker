@@ -6,24 +6,19 @@ from flask_sqlalchemy import SQLAlchemy
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
-#table showing relationships between User and Item tables
-# user_item = db.Table('user_item',
-#     db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-#     db.Column('item_id', db.Integer, db.ForeignKey('items.id'))
-# )
 
 class User_Item(db.Model):
     __tablename__ = "user_item"
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.id', ondelete="cascade"),
+        db.ForeignKey('users.user_id', ondelete="cascade"),
         primary_key=True
     )
 
     item_id = db.Column(
         db.Integer,
-        db.ForeignKey('items.id', ondelete="cascade"),
+        db.ForeignKey('items.item_id', ondelete="cascade"),
         primary_key=True
     )
 
@@ -31,7 +26,7 @@ class User_Item(db.Model):
 class User(db.Model):
     __tablename__ = "users"
 
-    id = db.Column(db.Integer, primary_key=True)
+    uuer_id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.Text, nullable=False, unique=True)
     username = db.Column(db.Text, nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
@@ -57,7 +52,6 @@ class User(db.Model):
     def authenticate(cls, username, password):
         """Find user with `username` and `password`. searches for a user whose password hash matches this password
         and, if it finds such a user, returns that user object.
-
         If can't find matching user (or if password is wrong), returns False.
         """
 
@@ -70,12 +64,13 @@ class User(db.Model):
 
         return False
 
+
 class Item(db.Model):
     """ All items in the game """
 
     __tablename__ = "items"
 
-    id = db.Column(db.Integer, primary_key=True)
+    item_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
 
     # tracking_users = db.relationship("User", backref="items", lazy=True)
@@ -87,24 +82,35 @@ class Shops(db.Model):
 
     __tablename__ = "shops"
 
-    owner = db.Column(db.Text, primary_key=True)
+    shop_id = db.Column(db.Integer, primary_key=True)
+    owner_id = db.Column(db.ForeignKey(Owner.owner_id))
     title = db.Column(db.Text, nullable=False)
     map_location = db.Column(db.Text, nullable=False)
     map_x = db.Column(db.Integer, nullable=False)
     map_y = db.Column(db.Integer, nullable=False)
+    timestamp = db.Column(db.DateTime, nullable=False)
+    req_timestamp = db.Column(db.DateTime, nullable=False)
 
     # items = db.relationship("Item", secondary="shops_item", backref="shops")
 
 
 class Shops_Item(db.Model):
-    """ Items currently in shops and their prices plus when the shop was opened """
+    """ Items currently in shops. Includes price. """
 
     __tablename__ = "shops_item"
 
-    owner = db.Column(db.ForeignKey("shops.owner"), primary_key=True)
-    item_id = db.Column(db.ForeignKey("items.id"), primary_key=True)
+    shop_id = db.Column(db.ForeignKey("shops.shop_id", primary_key=True))
+    item_id = db.Column(db.ForeignKey("items.item_id"), primary_key=True)
     price = db.Column(db.Integer, nullable=False)
-    timestamp = db.Column(db.DateTime, nullable=False)
+
+
+class Owner(db.Model):
+    """Shop owners by vending character name """
+
+    __tablename__ = "owners"
+
+    owner_id = db.Column(db.Integer, primary_key=True)
+    owner = db.Column(db.Text, nullable=False)
 
 
 def connect_db(app):

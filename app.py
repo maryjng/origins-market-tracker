@@ -1,15 +1,13 @@
 import os
 import requests
 
-from sqlalchemy import join
+from sqlalchemy import join, exc
 from flask import Flask, render_template, flash, redirect, session, g, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from key import API_KEY, SECRET_KEY
 
 from forms import UserAddForm, LoginForm, TrackItemForm
-from models import db, connect_db, User, Item, Shops, Shops_Item, User_Item
-
-BASE_URL = "https://api.originsro.org/api/v1/market/list"
+from models import db, connect_db, User, Item, Shops, Shops_Item, User_Item, Owner
 
 CURR_USER_KEY = "curr_user"
 
@@ -23,13 +21,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{username}:{password}@loc
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
+app.config['SECRET_KEY'] = SECRET_KEY
 toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
 
-#implement automated requests. Need to handle integrityerror when same attempting to add store data that is already in database
+#implement automated requests. Need to handle integrityerror when attempting to add store data that is already in database
 
 #add showing cards and refine level
 
@@ -86,7 +84,7 @@ def register():
             session[CURR_USER_KEY] = user.id
 
         except:
-            flash("Invalid ")
+            flash("Invalid credential format. Please check and try again.")
             return render_template("register.html", form=form)
 
         return redirect("home.html")
@@ -118,9 +116,10 @@ def trackings():
                                         Shops.map_y,
                                         Shops_Item.item_id,
                                         Shops_Item.price,
-                                        Shops_Item.timestamp)
+                                        Shops.timestamp)
                                 .join(Shops_Item)
                                 .filter(Shops_Item.item_id==id)
+                                .order_by(Shops_Item.price.asc())
                                 .limit(1)
                                 .all())
 
@@ -177,14 +176,16 @@ def track_item(id):
         return redirect("/login")
 
     user = g.user
-    prices = db.session.query(Shops_Item).filter_by(item_id=id).order_by(Shops_Item.price.asc()).all()
+    all_prices = db.session.query(Shops_Item).filter_by(item_id=id).order_by(Shops_Item.price.asc()).all()
     item = Item.query.get(id)
     id=id
 
-    return render_template("item_tracking.html", prices=prices, name=item.name, id=id)
+    prices = all_prices.filter_by(func.max(req_timestamp)).all()
+
+    return render_template("item_tracking.html", all_prices=all_prices, prices=prices, name=item.name, id=id)
 
 
-@app.route("/tracking/remove/<id>", methods=["POST"])
+@app.route("/tracking/<id>/remove", methods=["POST"])
 def remove_item(id):
     if not g.user:
         flash("Access unauthorized.", "danger")
@@ -200,6 +201,7 @@ def remove_item(id):
         db.session.commit()
 
     return redirect(url_for("trackings"))
+
 
 ###############################################################################
 
