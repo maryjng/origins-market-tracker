@@ -83,7 +83,7 @@ class Shops(db.Model):
     __tablename__ = "shops"
 
     shop_id = db.Column(db.Integer, primary_key=True)
-    owner_id = db.Column(db.ForeignKey(Owner.owner_id))
+    owner = db.Column(db.Text, nullable=False)
     title = db.Column(db.Text, nullable=False)
     map_location = db.Column(db.Text, nullable=False)
     map_x = db.Column(db.Integer, nullable=False)
@@ -104,13 +104,13 @@ class Shops_Item(db.Model):
     price = db.Column(db.Integer, nullable=False)
 
 
-class Owner(db.Model):
-    """Shop owners by vending character name """
+# class Owner(db.Model):
+#     """Shop owners by vending character name """
 
-    __tablename__ = "owners"
+#     __tablename__ = "owners"
 
-    owner_id = db.Column(db.Integer, primary_key=True)
-    owner = db.Column(db.Text, nullable=False)
+#     owner_id = db.Column(db.Integer, primary_key=True)
+#     owner = db.Column(db.Text, nullable=False)
 
 
 def connect_db(app):
