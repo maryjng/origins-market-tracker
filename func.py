@@ -16,9 +16,6 @@ def store_results():
     shops = requests.get("https://api.originsro.org/api/v1/market/list", params={"api_key": API_KEY})
     shops_res = shops.json()
 
-    shops_data = []
-    prices_data = []
-
     db_shops = Shops.query.all()
     shop_owners = [shop.owner for shop in db_shops]
     # shop_titles = [shop.titles for shop in db_shops]
@@ -27,25 +24,34 @@ def store_results():
     for shop in shops_res["shops"]:
         for item in shop["items"]:
             if item["item_id"] in item_ids:
-                location = shop["location"]
-                if shop["owner"] not in shop_owners:
-                    try:
-                        db.session.add(Shops(owner=shop["owner"],
-                                        timestamp=shop["creation_date"],
-                                        title=shop["title"],
-                                        map_location=location["map"],
-                                        map_x=location["x"],
-                                        map_y=location["y"],
-                                        req_timestamp = shops_res["generation_timestamp"]
-                                    ))
+                #Check if "owner" and "timestamp" both match for one entry
+                if shop["owner"] in shop_owners:
+                    owner_shops = Shops.query.filter_by(owner=shops["owner"], timestamp=shop["creation_date"]).first()
+                    if len(owner_shops) != 0:
+                     #if yes, just update the res_timestamp
+                        owner_shops.res_timestamp = shops_res["generation_timestamp"]
+                    else:
+                     #if no, add entry
+                        location = shop["location"]
+                        try:
+                            db.session.add(Shops(owner=shop["owner"],
+                                            timestamp=shop["creation_date"],
+                                            title=shop["title"],
+                                            map_location=location["map"],
+                                            map_x=location["x"],
+                                            map_y=location["y"],
+                                            req_timestamp = shops_res["generation_timestamp"]
+                                        ))
+                            
+                            shop_id = Shops.query.get(shop_id).filter_by(owner=shop["owner"]).order_by(req_timestamp.desc())
+                            
+                            db.session.add(Shops_Item(shop_id=shop_id,
+                                                    item_id=item["item_id"],
+                                                    price=item["price"],
+                                                    ))
+                        except exc.IntegrityError:
+                            db.session.rollback()
 
-                        db.session.add(Shops_Item(item_id=item["item_id"],
-                                                price=item["price"],
-                                                owner=shop["owner"]
-                                                ))
-                    except exc.IntegrityError:
-                        db.session.rollback()
-                        
     db.session.commit()
 
 # def ping_API():
@@ -91,6 +97,8 @@ def request_and_store_data():
     res = get_current_data()
     store_results(res)
 
+    del_threshold = datetime.today() + timedelta(days=-30)
+    delete(Shops).where(res_timestamp <= del_threshold)
     #delete rows where timestamp < DATEADD(d, -30, GETDATE())
 
     print("done running")
