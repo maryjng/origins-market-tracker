@@ -12,13 +12,13 @@ class User_Item(db.Model):
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.user_id', ondelete="cascade"),
+        db.ForeignKey('users.id', ondelete="cascade"),
         primary_key=True
     )
 
     item_id = db.Column(
         db.Integer,
-        db.ForeignKey('items.item_id', ondelete="cascade"),
+        db.ForeignKey('items.id', ondelete="cascade"),
         primary_key=True
     )
 
@@ -26,7 +26,7 @@ class User_Item(db.Model):
 class User(db.Model):
     __tablename__ = "users"
 
-    uuer_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.Text, nullable=False, unique=True)
     username = db.Column(db.Text, nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
@@ -70,10 +70,9 @@ class Item(db.Model):
 
     __tablename__ = "items"
 
-    item_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=False)
     name = db.Column(db.Text, nullable=False)
 
-    # tracking_users = db.relationship("User", backref="items", lazy=True)
     current_shops = db.relationship("Shops", secondary="shops_item", backref="items")
 
 
@@ -82,7 +81,7 @@ class Shops(db.Model):
 
     __tablename__ = "shops"
 
-    shop_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     owner = db.Column(db.Text, nullable=False)
     title = db.Column(db.Text, nullable=False)
     map_location = db.Column(db.Text, nullable=False)
@@ -99,16 +98,16 @@ class Shops_Item(db.Model):
 
     __tablename__ = "shops_item"
 
-    shop_id = db.Column(db.ForeignKey("shops.shop_id", primary_key=True))
-    item_id = db.Column(db.ForeignKey("items.item_id"), primary_key=True)
+    shop_id = db.Column(db.ForeignKey("shops.id"), primary_key=True)
+    item_id = db.Column(db.ForeignKey("items.id"), primary_key=True)
     price = db.Column(db.Integer, nullable=False)
 
 
 # class Owner(db.Model):
 #     """Shop owners by vending character name """
-
+#
 #     __tablename__ = "owners"
-
+#
 #     owner_id = db.Column(db.Integer, primary_key=True)
 #     owner = db.Column(db.Text, nullable=False)
 

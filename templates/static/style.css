@@ -1,5 +1,14 @@
-body {
-  background-color: #6bace2;
-  color: #00568a;
-  
+
+.navbar{
+  background-color: (182, 200, 248);
+  height: 50px;
+  border-radius: 10px;
+
+}
+
+.navbar a {
+  background-color: white;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 10px;
 }

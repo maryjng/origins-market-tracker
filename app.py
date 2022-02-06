@@ -1,13 +1,15 @@
 import os
 import requests
 
-from sqlalchemy import join, exc
+from sqlalchemy import join, exc, and_
+from sqlalchemy.sql import func
 from flask import Flask, render_template, flash, redirect, session, g, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from key import API_KEY, SECRET_KEY
 
 from forms import UserAddForm, LoginForm, TrackItemForm
-from models import db, connect_db, User, Item, Shops, Shops_Item, User_Item, Owner
+from models import db, connect_db, User, Item, Shops, Shops_Item, User_Item
+from func import store_results, automate
 
 CURR_USER_KEY = "curr_user"
 
@@ -16,7 +18,7 @@ app = Flask(__name__)
 username = "postgres"
 password = "kitty"
 dbname = "market"
-app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{username}:{password}@localhost:5432/{dbname}"
+app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{username}:{password}@localhost:5432/{dbname}?client_encoding=utf8"
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
@@ -26,6 +28,7 @@ toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
+#ER Diagram, UML, User Flow
 
 #implement automated requests. Need to handle integrityerror when attempting to add store data that is already in database
 
@@ -34,6 +37,13 @@ connect_db(app)
 #also... add css
 
 #########################################################################
+# shops_res = {
+#     'version': 1,
+#     'generation_timestamp': '2022-02-05T22:04:01.503113Z',
+#     'shops': [
+# 	   {'title': 'Chef+Toast+Cat+Creamy+Mage+', 'owner': 'Caracolito', 'location': {'map': 'prontera', 'x': 144, 'y': 174}, 'creation_date': '2022-02-05T22:01:46Z', 'type': 'V',
+#             'items': [{'item_id': 5058, 'amount': 1, 'price': 1999000}, {'item_id': 5025, 'amount': 1, 'price': 2888000}, {'item_id': 4109, 'amount': 1, 'price': 3777000}, {'item_id': 5057, 'amount': 1, 'price': 777000}, {'item_id': 4040, 'amount': 1, 'price': 3888000}, {'item_id': 5026, 'amount': 1, 'price': 999000}, {'item_id': 2214, 'amount': 1, 'price': 422000}, {'item_id': 5027, 'amount': 1, 'price': 1955000}, {'item_id': 5177, 'amount': 1, 'price': 3888000}]
+#             }]}
 
 @app.before_request
 def add_user_to_g():
@@ -49,7 +59,7 @@ def add_user_to_g():
 @app.route("/")
 @app.route("/home", methods=["GET"])
 def index():
-
+    automate()
     return render_template("home.html")
 
 
@@ -105,9 +115,11 @@ def trackings():
     if g.user:
         user = g.user
         item_ids = [item.id for item in user.tracked_items]
+        length = len(item_ids)
+
         all_shops = []
 
-        if len(item_ids) > 0:
+        if length > 0:
             for id in item_ids:
                 shops = (db.session.query(Shops.owner,
                                         Shops.title,
@@ -138,7 +150,6 @@ def trackings():
 
                     all_shops.append(shop)
 
-            length = len(all_shops)
 
         return render_template("trackings.html", shops=all_shops, length=length)
 
@@ -176,13 +187,59 @@ def track_item(id):
         return redirect("/login")
 
     user = g.user
-    all_prices = db.session.query(Shops_Item).filter_by(item_id=id).order_by(Shops_Item.price.asc()).all()
+    latest_req = db.session.query(Shops.req_timestamp).order_by(Shops.req_timestamp.desc()).limit(1)
+    # latest_req = latest_request.timestamp
+
+    historical = (db.session.query(Shops.owner,
+                                Shops.title,
+                                Shops.timestamp,
+                                Shops_Item.price)
+                                .join(Shops_Item)
+                                .filter(Shops_Item.item_id==id)
+                                .filter(Shops.req_timestamp<latest_req)
+                                .order_by(Shops_Item.price.asc())
+                                .all())
+
+    old_prices = []
+
+    for owner, title, timestamp, price in historical:
+        prices = {"owner": owner,
+                    "title": title,
+                    "timestamp": timestamp,
+                    "price": price}
+
+        old_prices.append(prices)
+
+
+    current = (db.session.query(Shops.owner,
+                                Shops.title,
+                                Shops.timestamp,
+                                Shops_Item.price,
+                                Shops.map_location,
+                                Shops.map_x,
+                                Shops.map_y)
+                                .join(Shops_Item)
+                                .filter(Shops_Item.item_id==id)
+                                .filter(Shops.req_timestamp==latest_req)
+                                .order_by(Shops_Item.price.asc())
+                                .all())
+    current_prices = []
+
+    for owner, title, timestamp, price, map_location, map_x, map_y in current:
+        prices = {"owner": owner,
+                    "title": title,
+                    "timestamp": timestamp,
+                    "price": price,
+                    "map_location": map_location,
+                    "map_x": map_x,
+                    "map_y": map_y}
+
+        current_prices.append(prices)
+
     item = Item.query.get(id)
     id=id
 
-    prices = all_prices.filter_by(func.max(req_timestamp)).all()
-
-    return render_template("item_tracking.html", all_prices=all_prices, prices=prices, name=item.name, id=id)
+    return render_template("item_tracking.html", old_prices=old_prices, prices=current_prices, name=item.name, id=id)
 
 
 @app.route("/tracking/<id>/remove", methods=["POST"])

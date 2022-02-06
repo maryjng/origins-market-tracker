@@ -5,16 +5,16 @@
   <meta charset="UTF-8">
   <title>OriginsRO Market Tracking</title>
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <link rel="shortcut icon" href="/static/favicon.ico">
+  <link rel="stylesheet" href="/static/style.css">
+
 </head>
 
 <body>
-  <nav>
+  <nav class="navbar">
     {% if not g.user %}
-    <a href="/login">Login</a>
-     |
-    <a href="/register">Register</a>
+      <a href="/login">Login</a>
+       |
+      <a href="/register">Register</a>
     {% else %}
       <a href="/tracking">My Trackings</a>
        |
