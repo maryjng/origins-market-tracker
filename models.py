@@ -72,9 +72,9 @@ class Item(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=False)
     name = db.Column(db.Text, nullable=False)
-    
+
     curr_prices = db.relationship("Shops_Item")
-    
+
 
 class Shops(db.Model):
     """ Shops currently open """
@@ -90,14 +90,14 @@ class Shops(db.Model):
     timestamp = db.Column(db.DateTime, nullable=False)
     req_timestamp = db.Column(db.DateTime, nullable=False)
 
-    items = db.relationship("Item", secondary='Shops_Item', backref="shops")
-    stock = db.relationship("Shops_Item", backref="shops")
-    
+    curr_items = db.relationship("Shops_Item", backref="shops")
+    stock = db.relationship("Shops_Item", backref="stocked_shops")
+
     @classmethod
     def check_if_in_db(cls, owner, timestamp):
-        check = db.session.query(Shops).filter(owner=owner, timestamp=timestamp).one_or_none()
+        check = db.session.query(Shops).filter_by(owner=owner, timestamp=timestamp).one_or_none()
         #Get first record, error if >1, None if 0
-        return check            
+        return check
 
 
 class Shops_Item(db.Model):
@@ -105,10 +105,10 @@ class Shops_Item(db.Model):
 
     __tablename__ = "shops_item"
 
-    shop_id = db.Column(db.ForeignKey("shops.id"), primary_key=True)
+    shop_id = db.Column(db.ForeignKey("shops.id"))
     item_id = db.Column(db.ForeignKey("items.id"), primary_key=True)
     price = db.Column(db.Integer, nullable=False)
-    
+
 
 def connect_db(app):
     db.app = app

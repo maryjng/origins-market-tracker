@@ -28,6 +28,7 @@ toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
+automate()
 #ER Diagram, UML, User Flow
 
 #implement automated requests. Need to handle integrityerror when attempting to add store data that is already in database
@@ -59,7 +60,7 @@ def add_user_to_g():
 @app.route("/")
 @app.route("/home", methods=["GET"])
 def index():
-    automate()
+    store_results()
     return render_template("home.html")
 
 
@@ -193,20 +194,26 @@ def track_item(id):
     historical = (db.session.query(Shops.owner,
                                 Shops.title,
                                 Shops.timestamp,
-                                Shops_Item.price)
+                                Shops_Item.price,
+                                Shops.map_location,
+                                Shops.map_x,
+                                Shops.map_y)
                                 .join(Shops_Item)
                                 .filter(Shops_Item.item_id==id)
                                 .filter(Shops.req_timestamp<latest_req)
-                                .order_by(Shops_Item.price.asc())
+                                .order_by(Shops.timestamp.desc())
                                 .all())
 
     old_prices = []
 
-    for owner, title, timestamp, price in historical:
+    for owner, title, timestamp, price, map_location, map_x, map_y in historical:
         prices = {"owner": owner,
                     "title": title,
                     "timestamp": timestamp,
-                    "price": price}
+                    "price": price,
+                    "map_location": map_location,
+                    "map_x": map_x,
+                    "map_y": map_y}
 
         old_prices.append(prices)
 

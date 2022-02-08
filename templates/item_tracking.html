@@ -19,7 +19,9 @@
       {% for price in old_prices %}
         <li> Zeny per: {{ price.price}}</li>
         <li> Shop Owner: {{ price.owner }}</li>
+        <li>Location: {{ price.map_location }} at ({{ price.map_x }}, {{ price.map_y }})</li>
         <li> Store Opened: {{ price.timestamp }}</li>
+        <br>
       {% endfor %}
     </ul>
 
