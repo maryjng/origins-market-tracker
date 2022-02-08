@@ -32,7 +32,7 @@ def store_results():
         if len(shop_item_ids) > 0:
             saved_shop = Shops.check_if_in_db(shop["owner"], shop["creation_date"])
 
-            if saved_shop != None:
+            if saved_shop == None:
                     location = shop["location"]
 
                     db.session.add(Shops(owner=shop["owner"],
@@ -52,6 +52,8 @@ def store_results():
                 for item in shop_items:
                     stock = Shops_Item(shop_id=latest.id, item_id=item["item_id"], price=item["price"])
                     latest.stock.append(stock)
+            else:
+                saved_shop.req_timestamp = shops_res["generation_timestamp"]
                     
     db.session.commit()
 
