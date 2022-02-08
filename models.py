@@ -73,7 +73,8 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=False)
     name = db.Column(db.Text, nullable=False)
 
-    current_shops = db.relationship("Shops", secondary="shops_item", backref="items")
+    shops = db.relationship("Shops", backref="items")
+    current_stock = db.relationship("Shops_Item", backref="unique_item")
 
 
 class Shops(db.Model):
@@ -90,7 +91,8 @@ class Shops(db.Model):
     timestamp = db.Column(db.DateTime, nullable=False)
     req_timestamp = db.Column(db.DateTime, nullable=False)
 
-    # items = db.relationship("Item", secondary="shops_item", backref="shops")
+    curr_items = db.relationship("Shops_Item", backref="shops")
+#   items = db.relationship("Item", secondary="shops_item", backref="shops")
 
 
 class Shops_Item(db.Model):
@@ -101,15 +103,9 @@ class Shops_Item(db.Model):
     shop_id = db.Column(db.ForeignKey("shops.id"), primary_key=True)
     item_id = db.Column(db.ForeignKey("items.id"), primary_key=True)
     price = db.Column(db.Integer, nullable=False)
-
-
-# class Owner(db.Model):
-#     """Shop owners by vending character name """
-#
-#     __tablename__ = "owners"
-#
-#     owner_id = db.Column(db.Integer, primary_key=True)
-#     owner = db.Column(db.Text, nullable=False)
+    
+   #shops = db.relationship("Shops", backref="curr_items")
+   #unique_item = db.relationship("Item", backref="current_stock")
 
 
 def connect_db(app):
