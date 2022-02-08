@@ -11,10 +11,10 @@ from models import db, connect_db, Item, Shops, Shops_Item, User
 
 def store_results():
     items_raw = db.session.query(Item.id).all()
-    items = [item[0] for item in items_raw]
+    items_ids = [item[0].id for item in items_raw]
 
-    shops = requests.get("https://api.originsro.org/api/v1/market/list", params={"api_key": API_KEY})
-    shops_res = shops.json()
+    res = requests.get("https://api.originsro.org/api/v1/market/list", params={"api_key": API_KEY})
+    shops_res = res.json()
 
     # f = open('newshops.json')
     # shops_res = json.load(f)
@@ -23,38 +23,37 @@ def store_results():
     shop_owners = [shop.owner for shop in db_shops]
     #gets list of shop owners in database
 
-    for shop in shops_res["shops"]:
-        if shop["type"] == "V":
-            for item in shop["items"]:
-                if item["item_id"] in items:
-                    owner_shops = db.session.query(Shops).filter(Shops.owner==shop["owner"]).filter(Shops.timestamp==shop["creation_date"]).first()
-                    if shop["owner"] in shop_owners and owner_shops:
-                        #just update the res_timestamp
-                        owner_shops.res_timestamp = shops_res["generation_timestamp"]
+    shops = [shop for shop in shops_res if shop["type"]=="V"]
+    for shop in shops:
+        #filter out the items we don't care about
+        shop_items = [item for item in shop if item["item_id"] in item_ids]
+        shop_item_ids = [item["item_id"] for item in shop_items]
+        
+        if len(shop_item_ids) > 0:
+            saved_shop = Shops.check_if_in_db(shop["owner"], shop["creation_date"])
 
-                    else:
-                     #if no, add entry
-                        location = shop["location"]
-                        # try:
-                        new_shop = db.session.add(Shops(owner=shop["owner"],
-                                        title=shop["title"],
-                                        map_location=location["map"],
-                                        map_x=location["x"],
-                                        map_y=location["y"],
-                                        timestamp=shop["creation_date"],
-                                        req_timestamp = shops_res["generation_timestamp"]
-                                    ))
+            if saved_shop != None:
+                    location = shop["location"]
 
-                        latest = db.session.query(func.max(Shops.id)).first()
-                        latest_shop = latest[0]
+                    db.session.add(Shops(owner=shop["owner"],
+                                title=shop["title"],
+                                map_location=location["map"],
+                                map_x=location["x"],
+                                map_y=location["y"],
+                                timestamp=shop["creation_date"],
+                                req_timestamp = shops_res["generation_timestamp"]
+                                ))
 
-                        db.session.add(Shops_Item(shop_id=latest_shop,
-                                                item_id=item["item_id"],
-                                                price=item["price"],
-                                                ))
-                        # # except exc.IntegrityError:
-                        #     db.session.rollback()
-                db.session.commit()
+                    db.session.flush()
+
+                    latest = db.session.query(func.max(Shops.id)).first()[0]
+    #                 latest_shop = latest[0]
+
+                for item in shop_items:
+                    stock = Shops_Item(shop_id=latest.id, item_id=item["item_id"], price=item["price"])
+                    latest.stock.append(stock)
+                    
+    db.session.commit()
 
 
 def get_current_data():
