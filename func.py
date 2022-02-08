@@ -19,10 +19,6 @@ def store_results():
     # f = open('newshops.json')
     # shops_res = json.load(f)
 
-    db_shops = Shops.query.all()
-    shop_owners = [shop.owner for shop in db_shops]
-    #gets list of shop owners in database
-
     shops = [shop for shop in shops_res if shop["type"]=="V"]
     for shop in shops:
         #filter out the items we don't care about
