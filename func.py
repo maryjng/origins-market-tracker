@@ -1,9 +1,10 @@
 import requests
-import schedule
-
 import json
-from sqlalchemy import exc
+
+from datetime import datetime, timedelta
+from sqlalchemy import exc, delete
 from sqlalchemy.sql import func
+
 from key import API_KEY
 from models import db, connect_db, Item, Shops, Shops_Item, User
 
@@ -65,63 +66,6 @@ def store_results():
     db.session.commit()
 
 
-
-
-
-
-
-
-
-
-
-
-    # for shop in shops_res["shops"]: #check every shop
-    #     if shop["type"] == "V": #check if vending
-    #         for item in shop["items"]: #check every item in shop
-    #             if item["item_id"] in items: #check if item is on our item list
-    #                 owner_shops = Shops.query.filter(Shops.owner==shop["owner"])
-    #                 owner_shop = owner_shops.filter(Shops.timestamp==shop["creation_date"]).order_by(Shops.timestamp.desc()).first()
-    #
-    #                 if shop["owner"] in shop_owners and owner_shops != None: #if shop already exists in db.
-    #                 #DAMIT
-    #                     if item["item_id"] in owner_shop.curr_items.item_id:
-    #                         #just update the res_timestamp
-    #                         owner_shops.res_timestamp = shops_res["generation_timestamp"]
-    #                     else:
-    #                         db.session.add(Shops_Item(shop_id=owner_shops.shop_id,
-    #                                                 item_id=item["item_id"],
-    #                                                 price=item["price"],
-    #                                                 ))
-    #
-    #                 else:
-    #                  #if no, add the shop to db
-    #                     location = shop["location"]
-    #                     # try:
-    #                     new_shop = db.session.add(Shops(owner=shop["owner"],
-    #                                     title=shop["title"],
-    #                                     map_location=location["map"],
-    #                                     map_x=location["x"],
-    #                                     map_y=location["y"],
-    #                                     timestamp=shop["creation_date"],
-    #                                     req_timestamp = shops_res["generation_timestamp"]
-    #                                 ))
-    #
-    #                     # owner_shops_update = db.session.query(Shops).filter(Shops.owner==shop["owner"]).filter(Shops.timestamp==shop["creation_date"]).first()
-    #                     # if shop["owner"] in shop_owners and owner_shops_update != None:
-    #                     #
-    #                     # latest_tup = db.session.query(func.max(Shops.id)).first()
-    #                     # latest_shop = latest_tup[0]
-    #                     # latest = Shops.query.get(latest_shop)
-    #
-    #                     db.session.add(Shops_Item(shop_id=owner_shops.shop_id,
-    #                                             item_id=item["item_id"],
-    #                                             price=item["price"],
-    #                                             ))
-    #                     # # except exc.IntegrityError:
-    #                     #     db.session.rollback()
-    #             db.session.commit()
-
-
 def get_current_data():
     shops = requests.get("https://api.originsro.org/api/v1/market/list", params={"api_key": API_KEY})
     shops_res = shops.json()
@@ -140,12 +84,12 @@ def insert_items():
 def request_and_store_data():
     store_results()
 
-    del_threshold = datetime.today() - timedelta(days=30)
-    delete(Shops).where(res_timestamp <= del_threshold)
+    del_threshold = datetime.today() - timedelta(days=15)
+    delete(Shops).where(Shops.req_timestamp <= del_threshold)
     db.session.commit()
 
-    print("done running")
+    print("done running" + datetime.today())
 
 #automate the above request and data storage for every 15 mins
-def automate():
-    schedule.every(15).minutes.do(request_and_store_data)
+# def automate():
+#     schedule.every(15).minutes.do(request_and_store_data)

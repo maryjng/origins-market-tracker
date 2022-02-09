@@ -3,13 +3,14 @@ import requests
 
 from sqlalchemy import join, exc, and_
 from sqlalchemy.sql import func
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, render_template, flash, redirect, session, g, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from key import API_KEY, SECRET_KEY
 
 from forms import UserAddForm, LoginForm, TrackItemForm
 from models import db, connect_db, User, Item, Shops, Shops_Item, User_Item
-from func import store_results, automate
+from func import store_results, request_and_store_data
 
 CURR_USER_KEY = "curr_user"
 
@@ -28,7 +29,9 @@ toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
-automate()
+schedule_task = BackgroundScheduler(daemon=True)
+schedule_task.add_job(request_and_store_data, 'interval', minutes=15)
+schedule_task.start()
 #ER Diagram, UML, User Flow
 
 #implement automated requests. Need to handle integrityerror when attempting to add store data that is already in database
@@ -60,7 +63,6 @@ def add_user_to_g():
 @app.route("/")
 @app.route("/home", methods=["GET"])
 def index():
-    store_results()
     return render_template("home.html")
 
 
