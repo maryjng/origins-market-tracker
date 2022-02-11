@@ -1,3 +1,4 @@
+APScheduler==3.8.1
 bcrypt==3.2.0
 blinker==1.4
 certifi==2021.10.8
@@ -19,9 +20,13 @@ Jinja2==3.0.3
 MarkupSafe==2.0.1
 psycopg2==2.9.3
 pycparser==2.21
+pytz==2021.3
+pytz-deprecation-shim==0.1.0.post0
 requests==2.27.1
 six==1.16.0
 SQLAlchemy==1.4.30
+tzdata==2021.5
+tzlocal==4.1
 urllib3==1.26.8
 Werkzeug==2.0.2
 WTForms==3.0.1
