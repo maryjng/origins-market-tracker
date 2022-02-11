@@ -6,7 +6,7 @@ from sqlalchemy.sql import func
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, render_template, flash, redirect, session, g, url_for
 from flask_debugtoolbar import DebugToolbarExtension
-from key import API_KEY, SECRET_KEY
+from key import API_KEY, SECRET_KEY, USERNAME, PASSWORD
 
 from forms import UserAddForm, LoginForm, TrackItemForm
 from models import db, connect_db, User, Item, Shops, Shops_Item, User_Item
@@ -16,10 +16,8 @@ CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 
-username = "postgres"
-password = "kitty"
 dbname = "market"
-app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{username}:{password}@localhost:5432/{dbname}?client_encoding=utf8"
+app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{USERNAME}:{PASSWORD}@localhost:5432/{dbname}?client_encoding=utf8"
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
@@ -29,25 +27,13 @@ toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
+#Automate data request and adding to db every 15 mins
 schedule_task = BackgroundScheduler(daemon=True)
 schedule_task.add_job(request_and_store_data, 'interval', minutes=15)
 schedule_task.start()
-#ER Diagram, UML, User Flow
-
-#implement automated requests. Need to handle integrityerror when attempting to add store data that is already in database
-
-#add showing cards and refine level
-
-#also... add css
 
 #########################################################################
-# shops_res = {
-#     'version': 1,
-#     'generation_timestamp': '2022-02-05T22:04:01.503113Z',
-#     'shops': [
-# 	   {'title': 'Chef+Toast+Cat+Creamy+Mage+', 'owner': 'Caracolito', 'location': {'map': 'prontera', 'x': 144, 'y': 174}, 'creation_date': '2022-02-05T22:01:46Z', 'type': 'V',
-#             'items': [{'item_id': 5058, 'amount': 1, 'price': 1999000}, {'item_id': 5025, 'amount': 1, 'price': 2888000}, {'item_id': 4109, 'amount': 1, 'price': 3777000}, {'item_id': 5057, 'amount': 1, 'price': 777000}, {'item_id': 4040, 'amount': 1, 'price': 3888000}, {'item_id': 5026, 'amount': 1, 'price': 999000}, {'item_id': 2214, 'amount': 1, 'price': 422000}, {'item_id': 5027, 'amount': 1, 'price': 1955000}, {'item_id': 5177, 'amount': 1, 'price': 3888000}]
-#             }]}
+
 
 @app.before_request
 def add_user_to_g():
@@ -63,6 +49,8 @@ def add_user_to_g():
 @app.route("/")
 @app.route("/home", methods=["GET"])
 def index():
+    if g.user:
+        return redirect(url_for("trackings"))
     return render_template("home.html")
 
 
@@ -93,6 +81,8 @@ def register():
             password = form.password.data)
 
             db.session.commit()
+
+            flash("Registration successful.")
 
             session[CURR_USER_KEY] = user.id
 
@@ -180,6 +170,10 @@ def add_item():
             user.tracked_items.append(item)
             db.session.commit()
 
+            flash("Successfully added.")
+        else:
+            flash("Item is already being tracked.")
+
     return render_template("add_item.html", form=form)
 
 
@@ -191,7 +185,6 @@ def track_item(id):
 
     user = g.user
     latest_req = db.session.query(Shops.req_timestamp).order_by(Shops.req_timestamp.desc()).limit(1)
-    # latest_req = latest_request.timestamp
 
     historical = (db.session.query(Shops.owner,
                                 Shops.title,
@@ -247,8 +240,12 @@ def track_item(id):
 
     item = Item.query.get(id)
     id=id
+    min = db.session.query(func.min(Shops_Item.price)).filter_by(item_id=id).first()[0]
+    max = db.session.query(func.max(Shops_Item.price)).filter_by(item_id=id).first()[0]
+    avg = db.session.query(func.avg(Shops_Item.price)).filter_by(item_id=id).first()[0]
+    avg = round(avg)
 
-    return render_template("item_tracking.html", old_prices=old_prices, prices=current_prices, name=item.name, id=id)
+    return render_template("item_tracking.html", old_prices=old_prices, prices=current_prices, name=item.name, id=id, min=min, max=max, avg=avg)
 
 
 @app.route("/tracking/<id>/remove", methods=["POST"])
