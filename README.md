@@ -8,7 +8,6 @@ Players looking to buy or sell specific items and/or track an item’s value wil
 
 The game server provides an API: doc/api/api_resources.md · master · OriginsRO / OriginsRO · GitLab. It contains data for buying and vending shops that are open in-game (cached every 10 minutes). 
 
-
 Features:
 - Data will be limited to items that are essential to the PvP content meta, meaning specific consumables, cards, gears, and etc items.
 - A user can choose which items they want to keep track of. The items will appear on their home page along with the shop and price of the cheapest available stock for it.
@@ -18,9 +17,11 @@ Features:
 
 
 ER Diagram:
+
 ![image](https://user-images.githubusercontent.com/68235230/160410726-6363e1d2-635f-4bef-b678-6306ade4ae87.png)
 
 The tables are as follows:
+
 ![image](https://user-images.githubusercontent.com/68235230/160411265-84defbd5-716f-47a3-9349-64b96a42a2a1.png)
 
 The many-to-many relationship between User and Item tables and Shops and Item tables are established using the User_Item and Shops_Item tables. 
