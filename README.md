@@ -24,12 +24,11 @@ The tables are as follows:
 
 ![image](https://user-images.githubusercontent.com/68235230/160411265-84defbd5-716f-47a3-9349-64b96a42a2a1.png)
 
-The many-to-many relationship between User and Item tables and Shops and Item tables are established using the User_Item and Shops_Item tables. 
-Note that Shops have two timestamp attributes: timestamp and res_timestamp. res_timestamp is used to distinguish whether a shop has already been added to the database when requesting and filtering data for storage.
+The many-to-many relationships between User and Item tables and Shops and Item tables are established using the User_Item and Shops_Item tables. 
+Note that Shops has two timestamp attributes: timestamp and res_timestamp. res_timestamp is used to distinguish whether a shop has already been added to the database when requesting and filtering data for storage.
 
 Future Changes/Additions:
 - Information about armor/weapon refine levels and slotted cards will be implemented. 
 - More items will be added according to further research on demand.
-
 - Some additional features include sending the above-mentioned alert through email or Discord, or calculating more item price statistics (standard deviation, etc.) and showing them to the user. The home page could also have statistics on the most popular items. 
 - Also, it could be possible to take the minimap for the in-game map a seller is on and set a mark on it using the shop’s x and y coordinates to show where the shop is located.
