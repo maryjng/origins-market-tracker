@@ -15,6 +15,10 @@ Features:
 - A user can choose which items they want to keep track of. The items will appear on their home page along with the shop and price of the cheapest available stock for it.
 - Each item has its own current shops/history page (/tracking/<item_id>) that shows shops currently selling the item, sorted by cheapest price. Below it, the shop details and price of items historically sold in the past 15 days are displayed in order of most recent. The min, max, and average price of the item in the past 15 days are displayed at the top of the page.
 
+ER Diagram:
+![image](https://user-images.githubusercontent.com/68235230/160410726-6363e1d2-635f-4bef-b678-6306ade4ae87.png)
+
+
 
 Future Changes/Additions:
 - Information about armor/weapon refine levels and slotted cards will be implemented. 
