@@ -11,14 +11,20 @@ The game server provides an API: doc/api/api_resources.md · master · OriginsRO
 
 Features:
 - Data will be limited to items that are essential to the PvP content meta, meaning specific consumables, cards, gears, and etc items.
-- Data older than 15 days will be deleted.
 - A user can choose which items they want to keep track of. The items will appear on their home page along with the shop and price of the cheapest available stock for it.
 - Each item has its own current shops/history page (/tracking/<item_id>) that shows shops currently selling the item, sorted by cheapest price. Below it, the shop details and price of items historically sold in the past 15 days are displayed in order of most recent. The min, max, and average price of the item in the past 15 days are displayed at the top of the page.
+- As the API does not provide shop and price history, regular requests are made to store 15 days-worth of data which is then later queried for user features. 
+- Data older than 15 days will be deleted as part of the request process.
+
 
 ER Diagram:
 ![image](https://user-images.githubusercontent.com/68235230/160410726-6363e1d2-635f-4bef-b678-6306ade4ae87.png)
 
+The tables are as follows:
+![image](https://user-images.githubusercontent.com/68235230/160411265-84defbd5-716f-47a3-9349-64b96a42a2a1.png)
 
+The many-to-many relationship between User and Item tables and Shops and Item tables are established using the User_Item and Shops_Item tables. 
+Note that Shops have two timestamp attributes: timestamp and res_timestamp. res_timestamp is used to distinguish whether a shop has already been added to the database when requesting and filtering data for storage.
 
 Future Changes/Additions:
 - Information about armor/weapon refine levels and slotted cards will be implemented. 
