@@ -75,6 +75,18 @@ class Item(db.Model):
 
     curr_prices = db.relationship("Shops_Item")
 
+    @classmethod
+    def add_item_to_db(cls, item_id, name):
+        """ Used to add another unique item to the table for tracking """
+
+        check_item = db.session.query(Item).filter(id=item_id)
+        if check_item:
+            return f"Item id {item_id} is already in db."
+        else:
+            db.session.add(Item(item_id, name))
+            db.session.commit()
+            return f"Successfully added {name} id {item_id} to database."
+
 
 class Shops(db.Model):
     """ Shops currently open """
@@ -90,8 +102,7 @@ class Shops(db.Model):
     timestamp = db.Column(db.DateTime, nullable=False)
     req_timestamp = db.Column(db.DateTime, nullable=False)
 
-    curr_items = db.relationship("Shops_Item", backref="shops")
-    stock = db.relationship("Shops_Item", backref="stocked_shops")
+    stock = db.relationship("Shops_Item", backref="shops", cascade="all, delete-orphan")
 
     @classmethod
     def check_if_in_db(cls, owner, timestamp):
@@ -100,12 +111,13 @@ class Shops(db.Model):
         return check
 
 
+
 class Shops_Item(db.Model):
     """ Items currently in shops. Includes price. """
 
     __tablename__ = "shops_item"
 
-    shop_id = db.Column(db.ForeignKey("shops.id"))
+    shop_id = db.Column(db.ForeignKey("shops.id", onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
     item_id = db.Column(db.ForeignKey("items.id"), primary_key=True)
     price = db.Column(db.Integer, nullable=False)
 

@@ -149,7 +149,7 @@ def trackings():
     return redirect(url_for("login"))
 
 
-@app.route("/add", methods=["GET", "POST"])
+@app.route("/tracking/add", methods=["GET", "POST"])
 def add_item():
     form = TrackItemForm()
 
