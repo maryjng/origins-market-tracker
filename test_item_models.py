@@ -1,6 +1,7 @@
 import os
 from unittest import TestCase
 from flask_bcrypt import Bcrypt
+from sqlalchemy import exc
 from key import USERNAME, PASSWORD
 
 from models import db, User, Item, Shops_Item, User_Item
@@ -24,24 +25,24 @@ class ItemModelsTestCase(TestCase):
 
 
     def test_item_model(self):
-    """Does the basic model work?"""
+        """Does the basic model work?"""
 
-    i = Item(id=504, name="White Potion")
+        i = Item(id=504, name="White Potion")
 
-    db.session.add(i)
-    db.session.commit()
+        db.session.add(i)
+        db.session.commit()
 
-    items = Item.query.all()
+        items = Item.query.all()
 
-    self.assertEqual(len(items), 1)
-    self.assertEqual(items[0].name, "White Potion")
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0].name, "White Potion")
 
 
     ###
     # Test class method
     ###
     def test_add_item_method(self):
-    """Does the class method add_item_to_db work?"""
+        """Does the class method add_item_to_db work?"""
 
         #setup by adding an item
         i1 = Item(id=504, name="White Potion")
@@ -50,7 +51,7 @@ class ItemModelsTestCase(TestCase):
 
         #check if duplicate is caught
         with self.assertRaises(exc.IntegrityError) as context:
-            Item.add_item_to_db(504, "White Potion")
+            Item.add_item_to_db(item_id=504, name="White Potion")
 
         #check if valid item is added by method
-        i2 = Item.add_item_to_db(505, "Blue Potion")
+        i2 = Item.add_item_to_db(item_id=505, name="Blue Potion")

@@ -79,7 +79,7 @@ class Item(db.Model):
     def add_item_to_db(cls, item_id, name):
         """ Used to add another unique item to the table for tracking """
 
-        check_item = db.session.query(Item).filter(id=item_id)
+        check_item = db.session.query(Item).filter_by(id=item_id)
         if check_item:
             return f"Item id {item_id} is already in db."
         else:
