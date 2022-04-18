@@ -10,19 +10,21 @@ from key import API_KEY, SECRET_KEY, USERNAME, PASSWORD
 
 from forms import UserAddForm, LoginForm, TrackItemForm
 from models import db, connect_db, User, Item, Shops, Shops_Item, User_Item
-from func import store_results, request_and_store_data
+from func import store_results, request_and_store_data, insert_items
 
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 
 dbname = "market"
-app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{USERNAME}:{PASSWORD}@localhost:5432/{dbname}?client_encoding=utf8"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', f"postgresql://{USERNAME}:{PASSWORD}@localhost:5432/{dbname}?client_encoding=utf8")
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 app.config['SECRET_KEY'] = SECRET_KEY
+
+app.debug = True
 toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
@@ -243,7 +245,8 @@ def track_item(id):
     min = db.session.query(func.min(Shops_Item.price)).filter_by(item_id=id).first()[0]
     max = db.session.query(func.max(Shops_Item.price)).filter_by(item_id=id).first()[0]
     avg = db.session.query(func.avg(Shops_Item.price)).filter_by(item_id=id).first()[0]
-    avg = round(avg)
+    if avg:
+        avg = round(avg)
 
     return render_template("item_tracking.html", old_prices=old_prices, prices=current_prices, name=item.name, id=id, min=min, max=max, avg=avg)
 
