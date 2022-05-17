@@ -2,6 +2,10 @@
 
 Tools used:  Python/Flask, PostgreSQL, SQLAlchemy, Jinja, API, HTML, CSS
 
+** NOTE **
+Unfortunately, the game private server has been closed, meaning no more shops and API requests. The server may return in the future but for now this app is retired.
+**
+
 The API utilized is for the market of a private server for an online game, Ragnarok Online. The goal is to present in-game vending/buying market prices for items, including accumulated historical prices for customizable user accessibility.
 
 Players looking to buy or sell specific items and/or track an item’s value will use the site. There are about 1400+ active players that login to the game’s server each day, plus around 1500 vending shops set-up. There is no auction house and the existing in-game commands for searching the market lack certain functionality and accessibility.
