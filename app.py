@@ -29,10 +29,10 @@ toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
-#Automate data request and adding to db every 15 mins
-schedule_task = BackgroundScheduler(daemon=True)
-schedule_task.add_job(request_and_store_data, 'interval', minutes=15)
-schedule_task.start()
+# #Automate data request and adding to db every 15 mins
+# schedule_task = BackgroundScheduler(daemon=True)
+# schedule_task.add_job(request_and_store_data, 'interval', minutes=15)
+# schedule_task.start()
 
 #########################################################################
 
