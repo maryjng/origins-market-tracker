@@ -5,7 +5,7 @@ from sqlalchemy import join, exc, and_
 from sqlalchemy.sql import func
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, render_template, flash, redirect, session, g, url_for
-from flask_debugtoolbar import DebugToolbarExtension
+# from flask_debugtoolbar import DebugToolbarExtension
 from key import API_KEY, SECRET_KEY, USERNAME, PASSWORD
 
 from forms import UserAddForm, LoginForm, TrackItemForm
@@ -24,12 +24,12 @@ app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 app.config['SECRET_KEY'] = SECRET_KEY
 
-app.debug = True
-toolbar = DebugToolbarExtension(app)
+app.debug = False
+# toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
-# #Automate data request and adding to db every 15 mins
+#Automate data request and adding to db every 15 mins
 # schedule_task = BackgroundScheduler(daemon=True)
 # schedule_task.add_job(request_and_store_data, 'interval', minutes=15)
 # schedule_task.start()
