@@ -5,29 +5,44 @@
   <meta charset="UTF-8">
   <title>OriginsRO Market Tracking</title>
 
-  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/bootstrap.min.css">
 
 </head>
 
-<body>
-  <nav class="navbar">
-    {% if not g.user %}
-      <a href="/login">Login</a>
-       |
-      <a href="/register">Register</a>
-    {% else %}
-      <a href="/tracking">My Trackings</a>
-       |
-      <a href="/logout">Logout</a>
+  <body>
+
+    {% with messages = get_flashed_messages() %}
+     {% if messages %}
+       <ul class=flash_messages>
+          {% for message in messages %}
+           <div class=flash_message>{{ message }}</div>
+          {% endfor %}
+      </ul>
     {% endif %}
-  </nav>
+   {% endwith %}
 
-  {% block content %}
+    <nav class="navbarRO">
+      {% if not g.user %}
+        <a href="/login">Login</a>
+         |
+        <a href="/register">Register</a>
+      {% else %}
+        <a href="/tracking">My Trackings</a>
+         |
+        <a href="/logout">Logout</a>
+      {% endif %}
+    </nav>
 
-  {% endblock %}
+    <!-- {% for message in get_flashed_messages() %}
+      <h2>{{ message }}</h2>
+    {% endfor %} -->
 
-</body>
-  
-  <script src="{{url_for('static', filename='script.js')}}"></script>
+    {% block content %}
 
+    {% endblock %}
+
+  </body>
+  <script src="https://unpkg.com/jquery"></script>
+  <script src="https://unpkg.com/axios/dist/axios.js"></script>
+  <script src="static/script.js"></script>
 </html>
