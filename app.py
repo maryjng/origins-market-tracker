@@ -17,14 +17,15 @@ CURR_USER_KEY = "curr_user"
 app = Flask(__name__)
 
 dbname = "market"
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', f"postgresql://{USERNAME}:{PASSWORD}@localhost:5432/{dbname}?client_encoding=utf8")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', f"postgresql://{USERNAME}:{PASSWORD}@localhost:5432/{dbname}")
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', "postgre///market")
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 app.config['SECRET_KEY'] = SECRET_KEY
 
-app.debug = False
+app.debug = True
 # toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
@@ -39,7 +40,7 @@ connect_db(app)
 
 @app.before_request
 def add_user_to_g():
-    """If we're logged in, add curr user to Flask global."""
+    """If logged in, add curr user to Flask global."""
 
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
@@ -64,9 +65,12 @@ def login():
         user = User.authenticate(form.username.data,
                                  form.password.data)
 
-        session[CURR_USER_KEY] = user.id
+        if user:
+            session[CURR_USER_KEY] = user.id
+            return redirect(url_for("index"))
 
-        return redirect(url_for("index"))
+        else:
+            flash("Invalid credentials. Please check and try again.", "danger")
 
     return render_template("login.html", form=form)
 
@@ -76,21 +80,16 @@ def register():
     form = UserAddForm()
 
     if form.validate_on_submit():
-        try:
-            User.signup(
-            username = form.username.data,
-            email = form.email.data,
-            password = form.password.data)
+        User.signup(
+        username = form.username.data,
+        email = form.email.data,
+        password = form.password.data)
 
-            db.session.commit()
+        db.session.commit()
 
-            flash("Registration successful.")
+        flash("Registration successful.")
 
-            session[CURR_USER_KEY] = user.id
-
-        except:
-            flash("Invalid credential format. Please check and try again.")
-            return render_template("register.html", form=form)
+        session[CURR_USER_KEY] = user.id
 
         return redirect("home.html")
 
@@ -168,13 +167,13 @@ def add_item():
         item_id = form.item_name.data
         item = Item.query.get(item_id)
 
-        if item_id not in user.tracked_items:
+        if item not in user.tracked_items:
             user.tracked_items.append(item)
             db.session.commit()
 
             flash("Successfully added.")
         else:
-            flash("Item is already being tracked.")
+            flash("Item is already being tracked.", "warning")
 
     return render_template("add_item.html", form=form)
 
