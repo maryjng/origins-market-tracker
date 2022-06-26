@@ -11,17 +11,11 @@
 
   <body>
 
-    {% with messages = get_flashed_messages() %}
-     {% if messages %}
-       <ul class=flash_messages>
-          {% for message in messages %}
-           <div class=flash_message>{{ message }}</div>
-          {% endfor %}
-      </ul>
-    {% endif %}
-   {% endwith %}
+    {% for message in get_flashed_messages() %}
+      <h2>{{ message }}</h2>
+    {% endfor %}
 
-    <nav class="navbarRO">
+    <nav class="navbar">
       {% if not g.user %}
         <a href="/login">Login</a>
          |
@@ -32,10 +26,6 @@
         <a href="/logout">Logout</a>
       {% endif %}
     </nav>
-
-    <!-- {% for message in get_flashed_messages() %}
-      <h2>{{ message }}</h2>
-    {% endfor %} -->
 
     {% block content %}
 
