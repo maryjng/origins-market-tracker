@@ -3,6 +3,7 @@ import requests
 
 from sqlalchemy import join, exc, and_
 from sqlalchemy.sql import func
+from sqlalchemy.exc import IntegrityError
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, render_template, flash, redirect, session, g, url_for
 # from flask_debugtoolbar import DebugToolbarExtension
@@ -67,10 +68,8 @@ def login():
 
         if user:
             session[CURR_USER_KEY] = user.id
-            return redirect(url_for("index"))
 
-        else:
-            flash("Invalid credentials. Please check and try again.", "danger")
+            return redirect(url_for("index"))
 
     return render_template("login.html", form=form)
 
@@ -80,20 +79,25 @@ def register():
     form = UserAddForm()
 
     if form.validate_on_submit():
-        User.signup(
-        username = form.username.data,
-        email = form.email.data,
-        password = form.password.data)
+        try:
+            User.signup(
+            username = form.username.data,
+            email = form.email.data,
+            password = form.password.data)
 
-        db.session.commit()
+            db.session.commit()
 
-        flash("Registration successful.")
+            flash("Registration successful.")
+            session[CURR_USER_KEY] = user.id
 
-        session[CURR_USER_KEY] = user.id
+            return redirect("home.html")
 
-        return redirect("home.html")
+        except IntegrityError as e:
+            flash("Username already taken.", 'danger')
+            return render_template("register.html", form=form)
 
-    return render_template("register.html", form=form)
+    else:
+        return render_template("register.html", form=form)
 
 
 @app.route("/logout")
@@ -173,7 +177,7 @@ def add_item():
 
             flash("Successfully added.")
         else:
-            flash("Item is already being tracked.", "warning")
+            flash("Item is already being tracked.")
 
     return render_template("add_item.html", form=form)
 
