@@ -33,6 +33,17 @@ The tables are as follows:
 The many-to-many relationships between User and Item tables and Shops and Item tables are established using the User_Item and Shops_Item tables. 
 Note that Shops has two timestamp attributes: timestamp and res_timestamp. res_timestamp is used to distinguish whether a shop has already been added to the database when requesting and filtering data for storage.
 
+Pictures of application:
+
+![image](https://user-images.githubusercontent.com/68235230/189373004-4ac68dce-f5cf-4b1c-aec1-0f6fff623437.png)
+
+![image](https://user-images.githubusercontent.com/68235230/189373514-8cf9f4f1-cf36-463f-9b37-ac3935b5793c.png)
+
+![image](https://user-images.githubusercontent.com/68235230/189373727-437906b7-8fc8-4394-baa8-aa00838d5a07.png)
+
+![image](https://user-images.githubusercontent.com/68235230/189373835-649a24b9-a897-49b9-86c1-750ede3f22ad.png)
+
+
 Future Changes/Additions:
 - Information about armor/weapon refine levels and slotted cards will be implemented. 
 - More items will be added according to further research on demand.
