@@ -19,7 +19,6 @@ Features:
 - As the API does not provide shop and price history, regular requests are made to store 15 days-worth of data which is then later queried for user features. 
 - Data older than 15 days will be deleted as part of the request process.
 
-** TESTS ARE BEING FINISHED AND CLEANED UP **
 
 NOTE: The application can be scaled to include many more if not all items in the game. I narrowed the items down for the project. 
 
