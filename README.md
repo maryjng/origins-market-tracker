@@ -37,11 +37,13 @@ Pictures of application:
 
 ![image](https://user-images.githubusercontent.com/68235230/189373004-4ac68dce-f5cf-4b1c-aec1-0f6fff623437.png)
 
-![image](https://user-images.githubusercontent.com/68235230/189373514-8cf9f4f1-cf36-463f-9b37-ac3935b5793c.png)
+![image](https://user-images.githubusercontent.com/68235230/193831909-e91f7c30-92b0-48cd-a1e3-6efcac0bd6bd.png)
 
-![image](https://user-images.githubusercontent.com/68235230/189373727-437906b7-8fc8-4394-baa8-aa00838d5a07.png)
+![image](https://user-images.githubusercontent.com/68235230/193831838-0d444980-9115-46dc-9d02-f593fd933bd3.png)
 
-![image](https://user-images.githubusercontent.com/68235230/189373835-649a24b9-a897-49b9-86c1-750ede3f22ad.png)
+![image](https://user-images.githubusercontent.com/68235230/193831512-22ed6a21-f982-4a2a-b13c-c220138df1cd.png)
+
+![image](https://user-images.githubusercontent.com/68235230/193831596-9295c090-a205-42b8-a98c-536590b957cb.png)
 
 
 Future Changes/Additions:
