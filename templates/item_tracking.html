@@ -3,31 +3,60 @@
 {% block content %}
   {% if g.user %}
     <h2>{{ name }} | ID: {{ id }}</h2>
-    <div class="stats-box">
+    <div>
       <h4>Statistics for past 15 days:</h4>
       <p>Max: {{ max }}  | Min: {{ min }}  |  Average: {{ avg }}</p>
     </div>
 
-    {% for price in prices %}
-    <div class="shop-box">
-      <div>Zeny per: {{ price.price}}</div>
-      <div>Shop Owner: {{ price.owner }}</div>
-      <div>Location: {{ price.map_location }} at ({{ price.map_x }}, {{ price.map_y }})</div>
-      <div>Store Opened: {{ price.timestamp }}</div>
+    <div>
+      <h2>Current Shops</h2>
+      <i style="margin: 10px">sorted by cheapest</i>
     </div>
-    {% endfor %}
+    <table>
+      <tbody>
+        <tr>
+          <th>Zeny Per Unit</th>
+          <th>Shop Owner</th>
+          <th>Location</th>
+          <th>Store Open Date</th>
+        </tr>
+
+      {% for price in prices %}
+        <tr>
+          <td>{{ price.price}}</td>
+          <td>{{ price.owner }}</td>
+          <td>{{ price.map_location }} at ({{ price.map_x }}, {{ price.map_y }})</td>
+          <td>{{ price.timestamp }}</td>
+        <tr>
+      {% endfor %}
+      </tbody>
+    </table>
+
 
     <br>
+    <div>
+      <h2>Historical</h2>
+      <i style="margin: 10px">sorted by shop date</i>
+    </div>
+    <table>
+      <tbody>
+        <tr>
+          <th>Zeny Per Unit</th>
+          <th>Shop Owner</th>
+          <th>Location</th>
+          <th>Store Open Date</th>
+        </tr>
 
-    <h2>Historical</h2>
       {% for price in old_prices %}
-      <div class="shop-box">
-        <div>Zeny per: {{ price.price}}</div>
-        <div>Shop Owner: {{ price.owner }}</div>
-        <div>Location: {{ price.map_location }} at ({{ price.map_x }}, {{ price.map_y }})</div>
-        <div>Store Opened: {{ price.timestamp }}</div>
-      </div>
+        <tr>
+          <td>{{ price.price}}</td>
+          <td>{{ price.owner }}</td>
+          <td>{{ price.map_location }} at ({{ price.map_x }}, {{ price.map_y }})</td>
+          <td>{{ price.timestamp }}</td>
+        </tr>
       {% endfor %}
+      </tbody>
+    </table>
 
 
 

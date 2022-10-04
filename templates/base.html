@@ -15,14 +15,14 @@
       <h2>{{ message }}</h2>
     {% endfor %}
 
-    <nav class="navbar">
+    <nav class="navbarRO">
       {% if not g.user %}
         <a href="/login">Login</a>
          |
         <a href="/register">Register</a>
       {% else %}
         <a href="/tracking">My Trackings</a>
-         |
+         | 
         <a href="/logout">Logout</a>
       {% endif %}
     </nav>
