@@ -20,8 +20,12 @@
               </form>
             </li>
 
+          {% if shop.price %}
             <li>Cheapest Available Price: {{ shop.price }}z</li>
             <li>Location: {{ shop.map_location }} at ({{ shop.map_x }}, {{ shop.map_y }})</li>
+          {% else %}
+            <li>{{ shop.name }} is currently not in stock.</li>
+          {% endif %}
 
           </div>
           <br>

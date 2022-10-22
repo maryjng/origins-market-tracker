@@ -10,54 +10,65 @@
 
     <div>
       <h2>Current Shops</h2>
-      <i style="margin: 10px">sorted by cheapest</i>
+      <i>sorted by cheapest</i>
     </div>
-    <table>
-      <tbody>
-        <tr>
-          <th>Zeny Per Unit</th>
-          <th>Shop Owner</th>
-          <th>Location</th>
-          <th>Store Open Date</th>
-        </tr>
 
-      {% for price in prices %}
-        <tr>
-          <td>{{ price.price}}</td>
-          <td>{{ price.owner }}</td>
-          <td>{{ price.map_location }} at ({{ price.map_x }}, {{ price.map_y }})</td>
-          <td>{{ price.timestamp }}</td>
-        <tr>
-      {% endfor %}
-      </tbody>
-    </table>
+    {% if prices|length == 0 %}
+      <p>(There is no current stock.)</p>
+
+    {% else %}
+      <table>
+        <tbody>
+          <tr>
+            <th>Zeny Per Unit</th>
+            <th>Shop Owner</th>
+            <th>Location</th>
+            <th>Store Open Date</th>
+          </tr>
+
+        {% for price in prices %}
+          <tr>
+            <td>{{ price.price}}</td>
+            <td>{{ price.owner }}</td>
+            <td>{{ price.map_location }} at ({{ price.map_x }}, {{ price.map_y }})</td>
+            <td>{{ price.timestamp }}</td>
+          <tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
 
 
     <br>
     <div>
       <h2>Historical</h2>
-      <i style="margin: 10px">sorted by shop date</i>
+      <i>sorted by shop date</i>
     </div>
-    <table>
-      <tbody>
-        <tr>
-          <th>Zeny Per Unit</th>
-          <th>Shop Owner</th>
-          <th>Location</th>
-          <th>Store Open Date</th>
-        </tr>
 
-      {% for price in old_prices %}
-        <tr>
-          <td>{{ price.price}}</td>
-          <td>{{ price.owner }}</td>
-          <td>{{ price.map_location }} at ({{ price.map_x }}, {{ price.map_y }})</td>
-          <td>{{ price.timestamp }}</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+    {% if old_prices|length == 0 %}
+      <p>(There is no stock from the past 15 days.)</p>
 
+    {% else %}
+      <table>
+        <tbody>
+          <tr>
+            <th>Zeny Per Unit</th>
+            <th>Shop Owner</th>
+            <th>Location</th>
+            <th>Store Open Date</th>
+          </tr>
+
+        {% for price in old_prices %}
+          <tr>
+            <td>{{ price.price}}</td>
+            <td>{{ price.owner }}</td>
+            <td>{{ price.map_location }} at ({{ price.map_x }}, {{ price.map_y }})</td>
+            <td>{{ price.timestamp }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
 
 
   {% endif %}
