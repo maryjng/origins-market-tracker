@@ -116,9 +116,10 @@ def trackings():
         length = len(item_ids)
 
         all_shops = []
-
+        #creating a list all_shops where each element is a dictionary of info on whichever shop is selling the item for cheapest
         if length > 0:
             for id in item_ids:
+                #get the shop info for the shop with the cheapest current stock for the item.
                 shops = (db.session.query(Shops.owner,
                                         Shops.title,
                                         Shops.map_location,
@@ -135,6 +136,10 @@ def trackings():
 
                 item = Item.query.get(id)
 
+                if len(shops) == 0:
+                    all_shops.append({"name": item.name, "item_id": item.id})
+
+                #build a dictionary for each shop, including the name of the item being tracked
                 for owner, title, map_location, map_x, map_y, item_id, price, timestamp in shops:
                     shop = {"name" : item.name,
                             "owner": owner,
@@ -147,7 +152,6 @@ def trackings():
                             "timestamp": timestamp}
 
                     all_shops.append(shop)
-
 
         return render_template("trackings.html", shops=all_shops, length=length)
 
@@ -191,6 +195,7 @@ def track_item(id):
     user = g.user
     latest_req = db.session.query(Shops.req_timestamp).order_by(Shops.req_timestamp.desc()).limit(1)
 
+    #create list of shops that sells the item AND whose data are already in the db from before the latest request
     historical = (db.session.query(Shops.owner,
                                 Shops.title,
                                 Shops.timestamp,
@@ -217,7 +222,7 @@ def track_item(id):
 
         old_prices.append(prices)
 
-
+    #create list of shops currently selling the item
     current = (db.session.query(Shops.owner,
                                 Shops.title,
                                 Shops.timestamp,
@@ -243,6 +248,7 @@ def track_item(id):
 
         current_prices.append(prices)
 
+    #some market statistics for the page
     item = Item.query.get(id)
     id=id
     min = db.session.query(func.min(Shops_Item.price)).filter_by(item_id=id).first()[0]
