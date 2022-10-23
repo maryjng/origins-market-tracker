@@ -10,7 +10,7 @@ The API utilized is for the market of a private server for an online game, Ragna
 
 Players looking to buy or sell specific items and/or track an item’s value will use the site. There are about 1400+ active players that login to the game’s server each day, plus around 1500 vending shops set-up. There is no auction house and the existing in-game commands for searching the market lack certain functionality and accessibility.
 
-The game server provides an API: doc/api/api_resources.md · master · OriginsRO / OriginsRO · GitLab. It contains data for buying and vending shops that are open in-game (cached every 10 minutes). 
+The game server provides an API: https://gitlab.com/originsro/originsro/-/blob/master/doc/api/api_resources.md. It contains data for buying and vending shops that are open in-game (cached every 10 minutes). 
 
 Features:
 - Data will be limited to items that are essential to the PvP content meta, meaning specific consumables, cards, gears, and etc items.
