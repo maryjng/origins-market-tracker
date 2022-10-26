@@ -11,7 +11,7 @@
     {% else %}
       <ul>
         {% for shop in shops %}
-          <div>
+          <div class="item-card">
             <li>
               <a href="tracking/{{ shop.item_id }}">{{ shop.name }}</a>
                | Item ID: {{ shop.item_id }}
