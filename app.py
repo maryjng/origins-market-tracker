@@ -80,7 +80,7 @@ def register():
 
     if form.validate_on_submit():
         try:
-            User.signup(
+            user = User.signup(
             username = form.username.data,
             email = form.email.data,
             password = form.password.data)
@@ -90,7 +90,7 @@ def register():
             flash("Registration successful.")
             session[CURR_USER_KEY] = user.id
 
-            return redirect("home.html")
+            return redirect(url_for("trackings"))
 
         except IntegrityError as e:
             flash("Username already taken.", 'danger')
@@ -167,8 +167,8 @@ def add_item():
         return redirect("/")
 
     user = g.user
-    # dropdown menu of items in database ORDERED BY ITEM NAME
-    items = [(i.id, i.name) for i in Item.query.all().order_by(desc(Item.name))]
+    # dropdown menu of items in database
+    items = [(i.id, i.name) for i in Item.query.order_by(Item.name.asc()).all()]
     form.item_name.choices = items
 
     if form.validate_on_submit():
