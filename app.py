@@ -167,8 +167,8 @@ def add_item():
         return redirect("/")
 
     user = g.user
-    # dropdown menu of items in database
-    items = [(i.id, i.name) for i in Item.query.all()]
+    # dropdown menu of items in database ORDERED BY ITEM NAME
+    items = [(i.id, i.name) for i in Item.query.all().order_by(desc(Item.name))]
     form.item_name.choices = items
 
     if form.validate_on_submit():
