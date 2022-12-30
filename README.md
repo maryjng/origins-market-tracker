@@ -37,9 +37,9 @@ Pictures of application:
 
 ![image](https://user-images.githubusercontent.com/68235230/210118127-ac0ae29e-1521-435a-a6d6-7fd2e3114743.png)
 
-![image](https://user-images.githubusercontent.com/68235230/193831909-e91f7c30-92b0-48cd-a1e3-6efcac0bd6bd.png)
+![image](https://user-images.githubusercontent.com/68235230/210118235-63580e25-5781-4c0d-b9d9-d25b07e6435c.png)
 
-![image](https://user-images.githubusercontent.com/68235230/193831838-0d444980-9115-46dc-9d02-f593fd933bd3.png)
+![image](https://user-images.githubusercontent.com/68235230/210118218-414714af-34c3-49c8-a24c-11813c91ff6d.png)
 
 ![image](https://user-images.githubusercontent.com/68235230/193831512-22ed6a21-f982-4a2a-b13c-c220138df1cd.png)
 
