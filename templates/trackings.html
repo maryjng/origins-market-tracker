@@ -2,35 +2,45 @@
 
 {% block content %}
   {% if g.user %}
-    <div>
-      <a href="/tracking/add">Add Item</a>
-    </div>
 
     {% if length == 0 %}
-      <h3>No items on tracking list.</h3>
+      <h3 style="text-align: center">No items on tracking list.</h3>
     {% else %}
-      <ul>
-        {% for shop in shops %}
-          <div class="item-card">
-            <li>
-              <a href="tracking/{{ shop.item_id }}">{{ shop.name }}</a>
-               | Item ID: {{ shop.item_id }}
-              <form method="POST" action="/tracking/{{ shop.item_id }}/remove" id="remove-item-form">
-                <button class="btn btn-sm">Remove</button>
-              </form>
-            </li>
 
-          {% if shop.price %}
-            <li>Cheapest Available Price: {{ shop.price }} zeny</li>
-            <li>Location: {{ shop.map_location }} at ({{ shop.map_x }}, {{ shop.map_y }})</li>
-          {% else %}
-            <li>{{ shop.name }} is currently not in stock.</li>
-          {% endif %}
+      <div id="grid" class="container">
+        <div class="row">
+
+            {% for shop in shops %}
+              <div class="col-md-3">
+                <div class="card">
+                  <form method="POST" action="/tracking/{{ shop.item_id }}/remove">
+                    <button class="btn btn-sm">X</button>
+                  </form>
+
+                  <div class="card__top">
+                    <span class="card-name"><a href="tracking/{{ shop.item_id }}">{{ shop.name }}</a></span>
+                    <span>Item ID: {{ shop.item_id }}</span>
+                  </div>
+
+                  <div class="card__bottom">
+
+                    {% if shop.price %}
+                    <div>
+                      <b>Current Cheapest: <a href="tracking/{{ shop.item_id }}">{{ shop.price }} zeny</a></b>
+                    </div>
+
+                      <!-- <div>Location: {{ shop.map_location }} at ({{ shop.map_x }}, {{ shop.map_y }})</div> -->
+                    {% else %}
+                      <div><i>{{ shop.name }}</i> is currently not in stock. </div>
+                    {% endif %}
+
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
 
           </div>
-          <br>
-        {% endfor %}
-      </ul>
+        </div>
     {% endif %}
   {% endif %}
 

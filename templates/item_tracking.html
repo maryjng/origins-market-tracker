@@ -2,22 +2,23 @@
 
 {% block content %}
   {% if g.user %}
-    <h2>{{ name }} | ID: {{ id }}</h2>
-    <div>
-      <h4>Statistics for past 15 days:</h4>
-      <p>Max: {{ max }} zeny  | Min: {{ min }} zeny  |  Average: {{ avg }} zeny</p>
+    <div class="table-title">
+      <h2>{{ name }} | ID: {{ id }}</h2>
+      <div>
+        <h4>Statistics for past 15 days:</h4>
+        <p>Max: {{ max }} zeny  | Min: {{ min }} zeny  |  Average: {{ avg }} zeny</p>
+      </div>
     </div>
 
-    <div>
-      <h2>Current Shops</h2>
-      <i>sorted by cheapest</i>
+    <div class="table-title">
+      <h2>Current Shops - sorted by cheapest</h2>
     </div>
 
     {% if prices|length == 0 %}
       <p>(There is no current stock.)</p>
 
     {% else %}
-      <table>
+      <table class="table table-striped">
         <tbody>
           <tr>
             <th>Zeny Per Unit</th>
@@ -40,16 +41,15 @@
 
 
     <br>
-    <div>
-      <h2>Historical</h2>
-      <i>sorted by shop date</i>
+    <div class="table-title">
+      <h2>Historical - sorted by shop date</h2>
     </div>
 
     {% if old_prices|length == 0 %}
       <p>(There is no stock from the past 15 days.)</p>
 
     {% else %}
-      <table>
+      <table class="table table-striped">
         <tbody>
           <tr>
             <th>Zeny Per Unit</th>
