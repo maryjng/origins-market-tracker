@@ -35,7 +35,7 @@ Note that Shops has two timestamp attributes: timestamp and res_timestamp. res_t
 
 Pictures of application:
 
-![image](https://user-images.githubusercontent.com/68235230/189373004-4ac68dce-f5cf-4b1c-aec1-0f6fff623437.png)
+![image](https://user-images.githubusercontent.com/68235230/210118127-ac0ae29e-1521-435a-a6d6-7fd2e3114743.png)
 
 ![image](https://user-images.githubusercontent.com/68235230/193831909-e91f7c30-92b0-48cd-a1e3-6efcac0bd6bd.png)
 
