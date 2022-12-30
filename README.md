@@ -41,9 +41,9 @@ Pictures of application:
 
 ![image](https://user-images.githubusercontent.com/68235230/210118218-414714af-34c3-49c8-a24c-11813c91ff6d.png)
 
-![image](https://user-images.githubusercontent.com/68235230/193831512-22ed6a21-f982-4a2a-b13c-c220138df1cd.png)
+![image](https://user-images.githubusercontent.com/68235230/210118260-7a4bb203-14eb-491d-8e34-7d0b68091daf.png)
 
-![image](https://user-images.githubusercontent.com/68235230/193831596-9295c090-a205-42b8-a98c-536590b957cb.png)
+![image](https://user-images.githubusercontent.com/68235230/210118272-1adebb42-25b8-4f6b-87ea-cd40df072764.png)
 
 
 Future Changes/Additions:
