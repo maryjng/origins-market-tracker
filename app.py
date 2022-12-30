@@ -120,6 +120,8 @@ def trackings():
         if length > 0:
             for id in item_ids:
                 #get the shop info for the shop with the cheapest current stock for the item.
+                #filter shops by those with max(req_timestamp) to ensure they are currently open
+                recent_timestamp = db.session.query(func.max(Shops.req_timestamp))
                 shops = (db.session.query(Shops.owner,
                                         Shops.title,
                                         Shops.map_location,
@@ -129,7 +131,7 @@ def trackings():
                                         Shops_Item.price,
                                         Shops.timestamp)
                                 .join(Shops_Item)
-                                .filter(Shops_Item.item_id==id)
+                                .filter(Shops_Item.item_id==id, Shops.req_timestamp==recent_timestamp)
                                 .order_by(Shops_Item.price.asc())
                                 .limit(1)
                                 .all())
