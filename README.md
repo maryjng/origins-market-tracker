@@ -35,16 +35,13 @@ Note that Shops has two timestamp attributes: timestamp and res_timestamp. res_t
 
 Pictures of application:
 
-![image](https://user-images.githubusercontent.com/68235230/210118632-95a84389-f354-4695-a481-92a93614531f.png)
-
-![image](https://user-images.githubusercontent.com/68235230/210118235-63580e25-5781-4c0d-b9d9-d25b07e6435c.png)
+![image](https://user-images.githubusercontent.com/68235230/210119273-8a596b05-8b9e-4c22-b098-8e1bf9c994e9.png)
 
 ![image](https://user-images.githubusercontent.com/68235230/210118218-414714af-34c3-49c8-a24c-11813c91ff6d.png)
 
-![image](https://user-images.githubusercontent.com/68235230/210118624-a61b121b-e4f6-4eb6-9eb8-c50cfaa741b4.png)
+![image](https://user-images.githubusercontent.com/68235230/210119237-ee6a80b0-7759-4f0c-a3da-e18f1f3d0fad.png)
 
-![image](https://user-images.githubusercontent.com/68235230/210118272-1adebb42-25b8-4f6b-87ea-cd40df072764.png)
-
+![image](https://user-images.githubusercontent.com/68235230/210119251-10ab89cb-ea26-4dfb-ad41-437fbe81c6a5.png)
 
 Future Changes/Additions (If the server comes back up):
 - Information about armor/weapon refine levels and slotted cards will be implemented. 
