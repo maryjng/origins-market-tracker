@@ -46,7 +46,7 @@ Pictures of application:
 ![image](https://user-images.githubusercontent.com/68235230/210118272-1adebb42-25b8-4f6b-87ea-cd40df072764.png)
 
 
-Future Changes/Additions:
+Future Changes/Additions (If the server comes back up):
 - Information about armor/weapon refine levels and slotted cards will be implemented. 
 - More items will be added according to further research on demand.
 - Some additional features include sending the above-mentioned alert through email or Discord, or calculating more item price statistics (standard deviation, etc.) and showing them to the user. The home page could also have statistics on the most popular items. 
