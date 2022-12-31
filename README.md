@@ -39,6 +39,8 @@ Pictures of application:
 
 ![image](https://user-images.githubusercontent.com/68235230/210118218-414714af-34c3-49c8-a24c-11813c91ff6d.png)
 
+![image](https://user-images.githubusercontent.com/68235230/210119289-5be94f68-42c2-4e63-92ff-0542b3a6c94c.png)
+
 ![image](https://user-images.githubusercontent.com/68235230/210119237-ee6a80b0-7759-4f0c-a3da-e18f1f3d0fad.png)
 
 ![image](https://user-images.githubusercontent.com/68235230/210119251-10ab89cb-ea26-4dfb-ad41-437fbe81c6a5.png)
