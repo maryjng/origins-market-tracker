@@ -11792,7 +11792,7 @@ body {
   margin: 0;
   background: #7289da;
 
-  color: #e2e7f7;
+  color: #eaf1f8;
   font-family: 'Open Sans', sans-serif;
 }
 .title {
@@ -11848,7 +11848,7 @@ body {
   }
 }
 
-.table-title {
+.tracking-header {
   text-align: center;
   font-size: 1.2rem;
   color: blue;

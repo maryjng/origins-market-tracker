@@ -150,7 +150,7 @@ def trackings():
                             "map_x": map_x,
                             "map_y": map_y,
                             "item_id": id,
-                            "price": price,
+                            "price": "{:,}".format(price),
                             "timestamp": timestamp}
 
                     all_shops.append(shop)
@@ -217,7 +217,7 @@ def track_item(id):
         prices = {"owner": owner,
                     "title": title,
                     "timestamp": timestamp,
-                    "price": price,
+                    "price": "{:,}".format(price),
                     "map_location": map_location,
                     "map_x": map_x,
                     "map_y": map_y}
@@ -243,7 +243,7 @@ def track_item(id):
         prices = {"owner": owner,
                     "title": title,
                     "timestamp": timestamp,
-                    "price": price,
+                    "price": "{:,}".format(price),
                     "map_location": map_location,
                     "map_x": map_x,
                     "map_y": map_y}
@@ -254,10 +254,13 @@ def track_item(id):
     item = Item.query.get(id)
     id=id
     min = db.session.query(func.min(Shops_Item.price)).filter_by(item_id=id).first()[0]
+    min = "{:,}".format(min)
     max = db.session.query(func.max(Shops_Item.price)).filter_by(item_id=id).first()[0]
+    max = "{:,}".format(max)
     avg = db.session.query(func.avg(Shops_Item.price)).filter_by(item_id=id).first()[0]
     if avg:
         avg = round(avg)
+        avg = "{:,}".format(avg)
 
     return render_template("item_tracking.html", old_prices=old_prices, prices=current_prices, name=item.name, id=id, min=min, max=max, avg=avg)
 
