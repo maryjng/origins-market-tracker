@@ -3,7 +3,8 @@
 Tools used:  Python/Flask, PostgreSQL, SQLAlchemy, Jinja, API, HTML, CSS
 
 ** NOTE **
-Unfortunately, the game private server has been closed, meaning no more shops and API requests. The server may return in the future but for now this app will only display data I have stored over 2 weeks.
+08/22/2024
+The server is back! Still waiting on the API to return as well. Looking back at this code, there is a lot of refactoring and improving to do. I may transform this project to integrate with other tools like Discord.. at least for personal use. 
 **
 
 The API utilized is for the market of a private server for an online game, Ragnarok Online. The goal is to present in-game vending/buying market prices for items, including accumulated historical prices for customizable user accessibility.
