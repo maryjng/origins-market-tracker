@@ -35,7 +35,7 @@ def store_results():
         shop_items = [item for item in shop["items"] if item["item_id"] in item_ids]
         shop_item_ids = [item["item_id"] for item in shop_items]
 
-        if len(shop_item_ids) > 0:
+        if len(shop_item_ids) > 0: 
             try:
                 saved_shop = Shops.check_if_in_db(shop["owner"], shop["creation_date"])
             except:
@@ -58,8 +58,8 @@ def store_results():
 
                 latest = db.session.query(func.max(Shops.id)).first()[0]
                 latest_shop = Shops.query.get(latest)
-
-                for item in shop_items:
+                #get the latest shop data for the unique shop (owner/timestamp) and...
+                for item in shop_items: 
                     saved_stock = db.session.query(Shops_Item).filter_by(item_id=item["item_id"], shop_id=latest).one_or_none()
                     if saved_stock == None:
                         stock = Shops_Item(shop_id=latest, item_id=item["item_id"], price=item["price"])
