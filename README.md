@@ -5,6 +5,7 @@ Tools used:  Python/Flask, PostgreSQL, SQLAlchemy, Jinja, API, HTML, CSS
 ** NOTE **
 08/22/2024
 The server is back! Still waiting on the API to return as well. Looking back at this code, there is a lot of refactoring and improving to do. I may transform this project to integrate with other tools like Discord.. at least for personal use. 
+I am aiming to include all items in this application this time.
 **
 
 The API utilized is for the market of a private server for an online game, Ragnarok Online. The goal is to present in-game vending/buying market prices for items, including accumulated historical prices for customizable user accessibility.
@@ -22,6 +23,11 @@ Features:
 
 
 NOTE: The application can be scaled to include many more if not all items in the game. I narrowed the items down for the project. 
+
+Planned table changes:
+![image](https://github.com/user-attachments/assets/2e9af571-7e56-40ec-bc89-da83ba749f68)
+
+
 
 ER Diagram:
 
