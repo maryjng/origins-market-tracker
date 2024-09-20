@@ -1,1 +1,5 @@
-.env
+.env.*
+/__pycache__
+/env
+market_tables.drawio
+create_tables.py

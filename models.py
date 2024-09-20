@@ -12,13 +12,13 @@ class User_Item(db.Model):
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.id', ondelete="cascade"),
+        db.ForeignKey('users.user_id', ondelete="cascade"),
         primary_key=True
     )
 
     item_id = db.Column(
         db.Integer,
-        db.ForeignKey('items.id', ondelete="cascade"),
+        db.ForeignKey('items.item_id', ondelete="cascade"),
         primary_key=True
     )
 
@@ -26,7 +26,7 @@ class User_Item(db.Model):
 class User(db.Model):
     __tablename__ = "users"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.Text, nullable=False, unique=True)
     username = db.Column(db.Text, nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
@@ -70,8 +70,9 @@ class Item(db.Model):
 
     __tablename__ = "items"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=False)
+    item_id = db.Column(db.Integer, primary_key=True, autoincrement=False)
     name = db.Column(db.Text, nullable=False)
+    slots = db.Column(db.Integer)
 
     curr_prices = db.relationship("Shops_Item")
 
@@ -93,7 +94,7 @@ class Shops(db.Model):
 
     __tablename__ = "shops"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    shop_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     owner = db.Column(db.Text, nullable=False)
     title = db.Column(db.Text, nullable=False)
     map_location = db.Column(db.Text, nullable=False)
@@ -117,9 +118,42 @@ class Shops_Item(db.Model):
 
     __tablename__ = "shops_item"
 
-    shop_id = db.Column(db.ForeignKey("shops.id", onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
-    item_id = db.Column(db.ForeignKey("items.id"), primary_key=True)
+    shop_id = db.Column(db.ForeignKey("shops.shop_id", onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
+    item_id = db.Column(db.ForeignKey("items.item_id"), primary_key=True)
     price = db.Column(db.Integer, nullable=False)
+    card_one = db.Column(db.Integer)
+    card_two = db.Column(db.Integer)
+    card_three = db.Column(db.Integer)
+    card_four = db.Column(db.Integer)
+    refine = db.Column(db.Integer)
+
+
+class Metadata(db.Model):
+    """ Holds the most recent timestamp for quick lookup """
+
+    __tablename__ = "metadata"
+
+    id = db.Column(db.Integer, primary_key=True)
+    latest_request_timestamp = db.Column(db.DateTime)
+
+    @classmethod
+    def update_latest_timestamp(cls, latest_timestamp): 
+        # Handles no stored timestamp, stored timestamp is less than given one (normal update flow), and other
+        
+        curr_latest = db.session.query(Metadata).first()
+
+        if curr_latest is None:
+            new_latest = Metadata(latest_request_timestamp=latest_timestamp)
+            db.session.add(new_latest)
+            db.session.commit()
+            return "Timestamp added successfully."
+
+        if curr_latest.latest_request_timestamp < latest_timestamp:
+            curr_latest.latest_request_timestamp = latest_timestamp
+            db.session.commit()
+            return "Timestamp updated successfully."
+
+        return "Timestamp is already most recent. This means the given timestamp is earlier than what is already in the database."
 
 
 def connect_db(app):

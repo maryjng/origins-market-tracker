@@ -1,25 +1,20 @@
-import os
-import requests
-
 from sqlalchemy import join, exc, and_
 from sqlalchemy.sql import func
 from sqlalchemy.exc import IntegrityError
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, render_template, flash, redirect, session, g, url_for
 # from flask_debugtoolbar import DebugToolbarExtension
-from key import API_KEY, SECRET_KEY, USERNAME, PASSWORD
 
+from config import SECRET_KEY, DB_USER, DB_PW, DB_NAME, DB_URL
 from forms import UserAddForm, LoginForm, TrackItemForm
 from models import db, connect_db, User, Item, Shops, Shops_Item, User_Item
-from func import store_results, request_and_store_data, insert_items
+import os
 
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 
-dbname = "market"
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', f"postgresql://{USERNAME}:{PASSWORD}@localhost:5432/{dbname}")
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', "postgre///market")
+DATABASE_URL = os.environ.get('DB_URL', f"postgresql://{DB_USER}:{DB_PW}@{DB_URL}/{DB_NAME}")
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
@@ -30,6 +25,9 @@ app.debug = True
 # toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
+
+if __name__ == "__main__":
+    app.run()
 
 #Automate data request and adding to db every 15 mins
 # schedule_task = BackgroundScheduler(daemon=True)

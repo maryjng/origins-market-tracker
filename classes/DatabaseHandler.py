@@ -1,8 +1,10 @@
+from models import Shops, Item, User_Item, Shops_Item, User
+
 class DatabaseHandler:
     def __init__(self, db_session):
         self.db_session = db_session
 
-    def store_data(self, data):
+    def store_shop_item_data(self, data):
         # Store the data in the database
         for item in data:
             shop = Shops(
