@@ -139,7 +139,7 @@ class Metadata(db.Model):
     @classmethod
     def update_latest_timestamp(cls, latest_timestamp): 
         # Handles no stored timestamp, stored timestamp is less than given one (normal update flow), and other
-        
+
         curr_latest = db.session.query(Metadata).first()
 
         if curr_latest is None:
@@ -154,6 +154,11 @@ class Metadata(db.Model):
             return "Timestamp updated successfully."
 
         return "Timestamp is already most recent. This means the given timestamp is earlier than what is already in the database."
+    
+    @classmethod
+    def get_latest_timestamp(cls):
+        curr_latest = db.session.query(Metadata).first()
+        return curr_latest.latest_request_timestamp
 
 
 def connect_db(app):
