@@ -1,6 +1,6 @@
 # origins-market-tracker
 
-Tools used:  Python/Flask, PostgreSQL, SQLAlchemy, Jinja, API, HTML, CSS
+## Tools used:  Python/Flask, PostgreSQL, SQLAlchemy, Jinja, API, HTML, CSS
 
 ** NOTE **
 08/22/2024
@@ -8,13 +8,15 @@ The server is back! Still waiting on the API to return as well. Looking back at 
 I am aiming to include all items in this application this time.
 **
 
+## Summary
+
 The API utilized is for the market of a private server for an online game, Ragnarok Online. The goal is to present in-game vending/buying market prices for items, including accumulated historical prices for customizable user accessibility.
 
 Players looking to buy or sell specific items and/or track an item’s value will use the site. There are about 1400+ active players that login to the game’s server each day, plus around 1500 vending shops set-up. There is no auction house and the existing in-game commands for searching the market lack certain functionality and accessibility.
 
 The game server provides an API: https://gitlab.com/originsro/originsro/-/blob/master/doc/api/api_resources.md. It contains data for buying and vending shops that are open in-game (cached every 10 minutes). 
 
-Features:
+## Features
 - Data will be limited to items that are essential to the PvP content meta, meaning specific consumables, cards, gears, and etc items.
 - A user can choose which items they want to keep track of. The items will appear on their home page along with the shop and price of the cheapest available stock for it.
 - Each item has its own current shops/history page (/tracking/<item_id>) that shows shops currently selling the item, sorted by cheapest price. Below it, the shop details and price of items historically sold in the past 15 days are displayed in order of most recent. The min, max, and average price of the item in the past 15 days are displayed at the top of the page.
