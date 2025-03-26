@@ -27,7 +27,104 @@ NOTE: The application can be scaled to include many more if not all items in the
 Planned table changes:
 ![image](https://github.com/user-attachments/assets/2e9af571-7e56-40ec-bc89-da83ba749f68)
 
+---
 
+# API Documentation: Tracking App
+
+This API provides endpoints for user authentication, session management, and item tracking.
+
+## Authentication & User Management
+
+### Login
+**Endpoint:** `POST /login`  
+**Description:** Authenticates a user and starts a session.  
+**Request Body:**  
+```json
+{
+  "username": "example_user",
+  "password": "securepassword"
+}
+```
+**Response:**  
+- `302 Found` → Redirects to `/` on success.  
+- `200 OK` → Renders login form on failure.  
+
+---
+
+### Register
+**Endpoint:** `POST /register`  
+**Description:** Registers a new user.  
+**Request Body:**  
+```json
+{
+  "username": "new_user",
+  "email": "user@example.com",
+  "password": "securepassword"
+}
+```
+**Response:**  
+- `302 Found` → Redirects to `/tracking` on success.  
+- `200 OK` → Renders registration form with error message if username exists.  
+
+---
+
+### Logout
+**Endpoint:** `GET /logout`  
+**Description:** Logs the user out and clears session data.  
+**Response:**  
+- `302 Found` → Redirects to `/`.  
+
+---
+
+## Item Tracking
+
+### Get Tracked Items
+**Endpoint:** `GET /tracking`  
+**Description:** Fetches all tracked items for the logged-in user.  
+**Response:**  
+- `200 OK` → Renders a list of tracked items.  
+- `302 Found` → Redirects to `/login` if unauthorized.  
+
+---
+
+### Add Item to Tracking
+**Endpoint:** `POST /tracking/add`  
+**Description:** Adds an item to the user’s tracking list.  
+**Request Body:**  
+```json
+{
+  "item_id": 123
+}
+```
+**Response:**  
+- `200 OK` → Displays confirmation message.  
+- `302 Found` → Redirects to `/` if unauthorized.  
+
+---
+
+### Get Item Tracking Details
+**Endpoint:** `GET /tracking/{id}`  
+**Description:** Retrieves historical and current prices for a tracked item.  
+**Path Parameter:**  
+- `id` (integer) → The ID of the item.  
+**Response:**  
+- `200 OK` → Renders item details and price statistics.  
+- `302 Found` → Redirects to `/login` if unauthorized.  
+
+---
+
+### Remove Item from Tracking
+**Endpoint:** `POST /tracking/{id}/remove`  
+**Description:** Removes an item from the user’s tracking list.  
+**Path Parameter:**  
+- `id` (integer) → The ID of the item to remove.  
+**Response:**  
+- `302 Found` → Redirects to `/tracking` after removal.  
+- `302 Found` → Redirects to `/login` if unauthorized.  
+
+---
+
+# Relational Database and ER Diagram
 
 ER Diagram:
 
@@ -40,7 +137,9 @@ The tables are as follows:
 The many-to-many relationships between User and Item tables and Shops and Item tables are established using the User_Item and Shops_Item tables. 
 Note that Shops has two timestamp attributes: timestamp and res_timestamp. res_timestamp is used to distinguish whether a shop has already been added to the database when requesting and filtering data for storage.
 
-Pictures of application:
+---
+
+# Pictures of Application and Future Changes
 
 ![image](https://user-images.githubusercontent.com/68235230/210119273-8a596b05-8b9e-4c22-b098-8e1bf9c994e9.png)
 
